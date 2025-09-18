@@ -1,53 +1,73 @@
+import 'dart:typed_data'; // <-- necessário para Uint8List
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
 
-class DashboardPage extends StatelessWidget {
+class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
+
+  @override
+  State<DashboardPage> createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends State<DashboardPage> {
+  String? _fileName;
+  Uint8List? _fileBytes; // armazenar conteúdo do arquivo
+
+  Future<void> _pickFile() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf'],
+        withData: true, // necessário na Web para pegar bytes
+      );
+
+      if (result != null && result.files.isNotEmpty) {
+        setState(() {
+          _fileName = result.files.single.name;
+          _fileBytes = result.files.single.bytes; // PDF em memória
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Arquivo selecionado: $_fileName")),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Nenhum arquivo selecionado.")),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Erro ao selecionar arquivo: $e")));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Dashboard - Contrato Social"),
-      ),
+      appBar: AppBar(title: const Text("Dashboard - Contrato Social")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Simulação de upload
             ElevatedButton.icon(
-              onPressed: () {
-                // Futuramente: abrir seletor de arquivo PDF
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Upload de contrato social")),
-                );
-              },
+              onPressed: _pickFile,
               icon: const Icon(Icons.upload_file),
-              label: const Text("Enviar Contrato Social"),
+              label: const Text("Enviar Contrato Social (PDF)"),
             ),
             const SizedBox(height: 20),
 
-            // Área para exibição futura dos dados extraídos
-            const Text(
-              "Dados extraídos do contrato:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Text(
-                  "Nenhum dado disponível.\n\n"
-                  "Aqui exibiremos o JSON mockado do contrato social.",
-                  style: TextStyle(color: Colors.grey),
-                ),
+            if (_fileName != null) ...[
+              Text("Arquivo selecionado: $_fileName"),
+              const SizedBox(height: 10),
+              Text(
+                _fileBytes != null
+                    ? "Arquivo carregado com ${_fileBytes!.length} bytes."
+                    : "Falha ao ler conteúdo.",
+                style: const TextStyle(color: Colors.grey),
               ),
-            ),
+            ],
           ],
         ),
       ),
