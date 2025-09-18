@@ -30,6 +30,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  mask_text_input_formatter: ^2.4.0
+  sqflite: ^2.0.3+1
+  path: ^1.8.1
+  sqflite_common_ffi: ^2.1.1+1
+  sqflite_common_ffi_web:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
