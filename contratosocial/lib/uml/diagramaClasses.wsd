@@ -1,0 +1,83 @@
+@startuml
+skinparam monochrome true
+
+class ContratoSocial {
+  -Long id
+  -DateTime dataUpload
+  -DateTime dataProcessamento
+  -Empresa empresa
+  -List<Socio> socios
+  -Administracao administracao
+  -CapitalSocial capitalSocial
+  -DuracaoExercicioSocial duracaoExercicio
+  -List<Clausulas> clausulas
+}
+
+class Empresa {
+  -Long id
+  -String nomeEmpresarial
+  -String cnpj
+  -Endereco enderecoSede
+  -String objetoSocial
+  -String duracaoSociedade
+}
+
+class Socio {
+  -Long id
+  -String nome
+  -String documento
+  -Endereco endereco
+  -String profissao
+  -double percentual
+  -String tipo
+  -String nacionalidade
+  -String estadoCivil
+}
+
+class CapitalSocial {
+  -Long id
+  -double valorTotal
+  -String formaIntegralizacao
+  -String prazoIntegralizacao
+}
+
+class Clausulas {
+  -Long id
+  -String tipo
+  -String descricao
+}
+
+class Administracao {
+  -Long id
+  -String tipoAdministracao
+  -String regras
+}
+
+class DuracaoExercicioSocial {
+  -Long id
+  -String periodo
+  -DateTime dataInicio
+  -DateTime dataFim
+}
+
+class Endereco {
+  -Long id
+  -String logradouro
+  -String numero
+  -String complemento
+  -String bairro
+  -String cidade
+  -String estado
+  -String cep
+}
+
+ContratoSocial "1" -- "1" Empresa
+ContratoSocial "1" --* "many" Socio
+ContratoSocial "1" -- "1" Administracao
+ContratoSocial "1" --* "1" CapitalSocial
+ContratoSocial "1" --* "1" DuracaoExercicioSocial
+ContratoSocial "1" --* "many" Clausulas
+Empresa "1" --* "1" Endereco
+Socio "1" --* "1" Endereco
+
+@enduml
