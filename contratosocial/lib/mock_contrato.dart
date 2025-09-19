@@ -39,7 +39,6 @@ const Map<String, dynamic> mockContrato = {
       "documento": "CPF: 555.666.777-88",
       "endereco": "Rua B, 456 - Maringá/PR",
       "profissao": "Advogada",
-      "percentual": "40%",
       "tipo": "Sócia quotista",
       "nacionalidade": "brasileira",
       "estado_civil": "casada"
