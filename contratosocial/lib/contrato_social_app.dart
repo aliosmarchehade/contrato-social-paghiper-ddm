@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dashboard_page.dart';
+import 'dashboard/dashboard_page.dart';
 
 class ContratoSocialApp extends StatelessWidget {
   const ContratoSocialApp({super.key});

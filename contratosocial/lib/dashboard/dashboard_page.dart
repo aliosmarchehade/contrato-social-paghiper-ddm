@@ -1,4 +1,4 @@
-import 'dart:typed_data'; // <-- necessário para Uint8List
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 
@@ -11,20 +11,20 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   String? _fileName;
-  Uint8List? _fileBytes; // armazenar conteúdo do arquivo
+  Uint8List? _fileBytes;
 
   Future<void> _pickFile() async {
     try {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['pdf'],
-        withData: true, // necessário na Web para pegar bytes
+        withData: true,
       );
 
       if (result != null && result.files.isNotEmpty) {
         setState(() {
           _fileName = result.files.single.name;
-          _fileBytes = result.files.single.bytes; // PDF em memória
+          _fileBytes = result.files.single.bytes;
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
