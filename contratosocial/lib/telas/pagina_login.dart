@@ -1,4 +1,4 @@
-import 'package:contratosocial/dashboard/dashboard_page.dart';
+import 'package:contratosocial/telas/dashboard/dashboard_page.dart';
 import 'package:flutter/material.dart';
 
 class PaginaLogin extends StatefulWidget {
