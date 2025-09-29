@@ -13,7 +13,7 @@ class Conexao {
       version: 1,
       onCreate: (db, version) {
         criarTabelas.forEach(db.execute);
-        insercoes.forEach(db.execute);
+        // insercoes.forEach(db.execute);
       },
       singleInstance: true,
     );

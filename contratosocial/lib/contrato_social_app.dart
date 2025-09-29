@@ -1,6 +1,6 @@
 import 'package:contratosocial/telas/pagina_login.dart';
 import 'package:flutter/material.dart';
-import 'dashboard/dashboard_page.dart';
+import 'telas/dashboard/dashboard_page.dart';
 
 class ContratoSocialApp extends StatelessWidget {
   const ContratoSocialApp({super.key});
