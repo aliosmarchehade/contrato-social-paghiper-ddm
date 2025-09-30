@@ -11,8 +11,8 @@ class ContratoSocialApp extends StatelessWidget {
       title: 'Processamento de Contrato Social',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: const PaginaLogin(),
-      //home: const DashboardPage(),
+      //home: const PaginaLogin(),
+      home: const DashboardPage(),
     );
   }
 }
