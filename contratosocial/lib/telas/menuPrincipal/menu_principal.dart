@@ -10,25 +10,20 @@ class MenuPrincipal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, 
+      backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 10,
         backgroundColor: const Color(0xFF0860DB),
-        iconTheme: const IconThemeData(
-          color: Colors.white, 
-        ),
+        iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
           "Contrato Social",
-          style: TextStyle(
-            color: Colors.white,
-          ),
+          style: TextStyle(color: Colors.white),
         ),
       ),
       drawer: Drawer(
         backgroundColor: Colors.white,
         child: Column(
           children: [
-
             UserAccountsDrawerHeader(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
@@ -53,10 +48,16 @@ class MenuPrincipal extends StatelessWidget {
                 padding: EdgeInsets.zero,
                 children: [
                   ListTile(
-                    leading: const Icon(Icons.description, color: Color(0xFF0860DB)),
+                    leading: const Icon(
+                      Icons.description,
+                      color: Color(0xFF0860DB),
+                    ),
                     title: const Text(
                       "Ler contrato social",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                     onTap: () {
                       Navigator.of(context).pushNamed(Rotas.lerContrato);
@@ -66,10 +67,26 @@ class MenuPrincipal extends StatelessWidget {
                     leading: const Icon(Icons.people, color: Color(0xFF0860DB)),
                     title: const Text(
                       "Filtrar Sócios",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                     onTap: () {
                       Navigator.of(context).pushNamed(Rotas.filtro);
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.book, color: Color(0xFF0860DB)),
+                    title: const Text(
+                      "Listar contratos salvos",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.of(context).pushNamed(Rotas.ListarSalvos);
                     },
                   ),
                 ],
@@ -85,18 +102,20 @@ class MenuPrincipal extends StatelessWidget {
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
                 onTap: () {
-              Navigator.of(context).pushNamedAndRemoveUntil(Rotas.login,
-              (Route<dynamic> route) => false, // remove todas as rotas anteriores
-  );
-},
-
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    Rotas.login,
+                    (Route<dynamic> route) =>
+                        false, // remove todas as rotas anteriores
+                  );
+                },
               ),
             ),
           ],
         ),
       ),
       body: Center(
-        child: Text("Olá, ${usuario.nome}, seja bem-vindo",
+        child: Text(
+          "Olá, ${usuario.nome}, seja bem-vindo",
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
         ),
       ),

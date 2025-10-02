@@ -3,10 +3,9 @@ import 'package:contratosocial/models/Usuario.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:contratosocial/mock/mock_contrato.dart';
+import 'package:contratosocial/banco/contrato_social_dao.dart';
 
 class DashboardPage extends StatefulWidget {
-  
-
   const DashboardPage({super.key});
 
   @override
@@ -137,22 +136,53 @@ class _DashboardPageState extends State<DashboardPage> {
                       ),
                     ),
                     const SizedBox(height: 16),
-
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF0860DB),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green, // Cor para salvar
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          onPressed: () async {
+                            try {
+                              await ContratoSocialDao().saveContrato(
+                                contractData,
+                              );
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Contrato salvo com sucesso!"),
+                                ),
+                              );
+                              Navigator.pop(context); // Fecha dialog
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text("Erro ao salvar: $e")),
+                              );
+                            }
+                          },
+                          child: const Text(
+                            "Salvar",
+                            style: TextStyle(color: Colors.white),
                           ),
                         ),
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text(
-                          "Fechar",
-                          style: TextStyle(color: Colors.white),
+                        const SizedBox(width: 8),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blueAccent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text(
+                            "Fechar",
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   ],
                 ),
@@ -167,14 +197,10 @@ class _DashboardPageState extends State<DashboardPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        iconTheme: const IconThemeData(
-          color: Colors.white,
-        ),
+        iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
           "Ler Contrato Social",
-          style: TextStyle(
-            color: Colors.white,
-          ),
+          style: TextStyle(color: Colors.white),
         ),
         elevation: 10,
         backgroundColor: Color(0xFF0860DB),

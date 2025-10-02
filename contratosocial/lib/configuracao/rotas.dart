@@ -4,5 +4,5 @@ class Rotas {
   static const String filtro = '/filtrar';
   static const String login = '/login';
   static const String cadastrar = '/cadastrar';
-
+  static const String ListarSalvos = '/ListarSalvos';
 }
