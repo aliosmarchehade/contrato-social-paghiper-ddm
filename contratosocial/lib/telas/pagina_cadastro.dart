@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/usuario.dart';
+import '../models/Usuario.dart';
 import '../banco/database_helper.dart';
 
 class PaginaCadastro extends StatefulWidget {
@@ -17,35 +17,36 @@ class _PaginaCadastroState extends State<PaginaCadastro> {
   final _confirmarSenhaController = TextEditingController();
 
   void _fazerCadastro() async {
-  if (_formKey.currentState!.validate()) {
-    if (_senhaController.text != _confirmarSenhaController.text) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("As senhas não coincidem!")),
-      );
-      return;
-    }
+    if (_formKey.currentState!.validate()) {
+      if (_senhaController.text != _confirmarSenhaController.text) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("As senhas não coincidem!")),
+        );
+        return;
+      }
 
-    final usuario = Usuario(
-      nome: _nomeController.text.trim(),
-      email: _emailController.text.trim(),
-      senha: _senhaController.text.trim(),
-    );
-
-    try {
-      await DatabaseHelper().inserirUsuario(usuario);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Cadastro realizado com sucesso!")),
+      final usuario = Usuario(
+        nome: _nomeController.text.trim(),
+        email: _emailController.text.trim(),
+        senha: _senhaController.text.trim(),
       );
 
-      Navigator.pop(context); // volta para tela de login
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Erro: email já cadastrado!")),
-      );
+      try {
+        await DatabaseHelper().inserirUsuario(usuario);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Cadastro realizado com sucesso!")),
+        );
+
+        Navigator.pop(context); // volta para tela de login
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Erro: email já cadastrado!")),
+        );
+      }
     }
   }
-}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,8 +88,11 @@ class _PaginaCadastroState extends State<PaginaCadastro> {
                         prefixIcon: Icon(Icons.person),
                         border: OutlineInputBorder(),
                       ),
-                      validator: (value) =>
-                          value == null || value.isEmpty ? "Digite seu nome" : null,
+                      validator:
+                          (value) =>
+                              value == null || value.isEmpty
+                                  ? "Digite seu nome"
+                                  : null,
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
@@ -98,8 +102,11 @@ class _PaginaCadastroState extends State<PaginaCadastro> {
                         prefixIcon: Icon(Icons.email),
                         border: OutlineInputBorder(),
                       ),
-                      validator: (value) =>
-                          value == null || value.isEmpty ? "Digite seu email" : null,
+                      validator:
+                          (value) =>
+                              value == null || value.isEmpty
+                                  ? "Digite seu email"
+                                  : null,
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
@@ -110,8 +117,11 @@ class _PaginaCadastroState extends State<PaginaCadastro> {
                         prefixIcon: Icon(Icons.lock),
                         border: OutlineInputBorder(),
                       ),
-                      validator: (value) =>
-                          value == null || value.isEmpty ? "Digite a senha" : null,
+                      validator:
+                          (value) =>
+                              value == null || value.isEmpty
+                                  ? "Digite a senha"
+                                  : null,
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
@@ -122,9 +132,11 @@ class _PaginaCadastroState extends State<PaginaCadastro> {
                         prefixIcon: Icon(Icons.lock_outline),
                         border: OutlineInputBorder(),
                       ),
-                      validator: (value) => value == null || value.isEmpty
-                          ? "Confirme sua senha"
-                          : null,
+                      validator:
+                          (value) =>
+                              value == null || value.isEmpty
+                                  ? "Confirme sua senha"
+                                  : null,
                     ),
                     const SizedBox(height: 22),
                     ElevatedButton.icon(
@@ -132,10 +144,7 @@ class _PaginaCadastroState extends State<PaginaCadastro> {
                       icon: const Icon(Icons.check),
                       label: const Text(
                         "Cadastrar",
-                        style: TextStyle(fontSize: 18,
-                        color:Colors.white,
-                        ),
-
+                        style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color.fromARGB(255, 0, 0, 0),

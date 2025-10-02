@@ -1,7 +1,7 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 import 'package:path/path.dart';
-import '../models/usuario.dart';
+import '../models/Usuario.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class DatabaseHelper {
@@ -22,9 +22,10 @@ class DatabaseHelper {
     if (kIsWeb) {
       databaseFactory = databaseFactoryFfiWeb;
     }
-    
-    final path = kIsWeb ? 'usuarios.db' : join(await getDatabasesPath(), 'usuarios.db');
-    
+
+    final path =
+        kIsWeb ? 'usuarios.db' : join(await getDatabasesPath(), 'usuarios.db');
+
     return await openDatabase(
       path,
       version: 1,
@@ -48,7 +49,7 @@ class DatabaseHelper {
       // Remove o 'id' do mapa antes de inserir
       final map = usuario.toMap();
       map.remove('id');
-      
+
       return await db.insert('usuarios', map);
     } on DatabaseException catch (e) {
       print('DatabaseException: $e');

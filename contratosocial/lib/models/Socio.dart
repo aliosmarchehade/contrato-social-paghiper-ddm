@@ -10,7 +10,7 @@ class Socio {
   String tipo;
   String nacionalidade;
   String estadoCivil;
-  int? contratoSocialId; // FK
+  int? contratoSocialId;
 
   Socio({
     this.id,
