@@ -27,7 +27,9 @@ class _LoginPageState extends State<PaginaLogin> {
       if (usuario != null) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => MenuPrincipal(usuario: usuario,)),
+          MaterialPageRoute(
+            builder: (context) => MenuPrincipal(usuario: usuario),
+          ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -47,10 +49,12 @@ class _LoginPageState extends State<PaginaLogin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 400),
           child: Card(
+            color: Colors.white,
             elevation: 10,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
@@ -69,7 +73,7 @@ class _LoginPageState extends State<PaginaLogin> {
                       style: TextStyle(
                         fontSize: 26,
                         fontWeight: FontWeight.bold,
-                        color: Color.fromARGB(255, 99, 16, 110),
+                        color: Color(0xFF0860DB),
                       ),
                     ),
                     const SizedBox(height: 28),
@@ -112,12 +116,13 @@ class _LoginPageState extends State<PaginaLogin> {
                     const SizedBox(height: 22),
                     ElevatedButton.icon(
                       onPressed: _fazerLogin,
-                      icon: const Icon(Icons.login),
+                      icon: const Icon(Icons.login, color: Colors.white),
                       label: const Text(
                         "Entrar",
-                        style: TextStyle(fontSize: 18),
+                        style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
                       style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF0860DB),
                         minimumSize: const Size.fromHeight(52),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -127,12 +132,13 @@ class _LoginPageState extends State<PaginaLogin> {
                     const SizedBox(height: 12),
                     ElevatedButton.icon(
                       onPressed: _irParaCadastro,
-                      icon: const Icon(Icons.person_add),
+                      icon: const Icon(Icons.person_add, color: Colors.white),
                       label: const Text(
                         "Cadastrar",
-                        style: TextStyle(fontSize: 18),
+                        style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
                       style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF0860DB),
                         minimumSize: const Size.fromHeight(52),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),

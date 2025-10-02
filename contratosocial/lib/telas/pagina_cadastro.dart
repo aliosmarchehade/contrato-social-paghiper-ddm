@@ -50,9 +50,10 @@ class _PaginaCadastroState extends State<PaginaCadastro> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text("Cadastro"),
-        backgroundColor: const Color.fromARGB(255, 206, 182, 209),
+        backgroundColor: Colors.white,
       ),
       body: Center(
         child: ConstrainedBox(
@@ -77,7 +78,7 @@ class _PaginaCadastroState extends State<PaginaCadastro> {
                       style: TextStyle(
                         fontSize: 26,
                         fontWeight: FontWeight.bold,
-                        color: Color.fromARGB(255, 99, 16, 110),
+                        color: Color(0xFF0860DB),
                       ),
                     ),
                     const SizedBox(height: 28),
@@ -123,13 +124,13 @@ class _PaginaCadastroState extends State<PaginaCadastro> {
                                   ? "Digite a senha"
                                   : null,
                     ),
-//              validator: (value) =>
-//                     value == null || value.isEmpty ? "Digite a senha" : null,
-//                           validator: (value) {
-//   if (value == null || value.isEmpty) return "Digite sua senha";
-//   if (value.length < 6) return "A senha deve ter pelo menos 6 caracteres";
-//   return null;
-// },
+                    //              validator: (value) =>
+                    //                     value == null || value.isEmpty ? "Digite a senha" : null,
+                    //                           validator: (value) {
+                    //   if (value == null || value.isEmpty) return "Digite sua senha";
+                    //   if (value.length < 6) return "A senha deve ter pelo menos 6 caracteres";
+                    //   return null;
+                    // },
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _confirmarSenhaController,
@@ -148,13 +149,12 @@ class _PaginaCadastroState extends State<PaginaCadastro> {
                     const SizedBox(height: 22),
                     ElevatedButton.icon(
                       onPressed: _fazerCadastro,
-                      icon: const Icon(Icons.check),
                       label: const Text(
                         "Cadastrar",
                         style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+                        backgroundColor: const Color(0xFF0860DB),
                         minimumSize: const Size.fromHeight(52),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
