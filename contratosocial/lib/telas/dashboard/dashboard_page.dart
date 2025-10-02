@@ -1,9 +1,12 @@
 import 'dart:typed_data';
+import 'package:contratosocial/models/Usuario.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:contratosocial/mock/mock_contrato.dart';
 
 class DashboardPage extends StatefulWidget {
+  
+
   const DashboardPage({super.key});
 
   @override

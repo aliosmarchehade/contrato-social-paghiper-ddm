@@ -123,6 +123,13 @@ class _PaginaCadastroState extends State<PaginaCadastro> {
                                   ? "Digite a senha"
                                   : null,
                     ),
+//              validator: (value) =>
+//                     value == null || value.isEmpty ? "Digite a senha" : null,
+//                           validator: (value) {
+//   if (value == null || value.isEmpty) return "Digite sua senha";
+//   if (value.length < 6) return "A senha deve ter pelo menos 6 caracteres";
+//   return null;
+// },
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _confirmarSenhaController,

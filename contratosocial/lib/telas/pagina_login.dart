@@ -1,4 +1,5 @@
 import 'package:contratosocial/telas/dashboard/dashboard_page.dart';
+import 'package:contratosocial/telas/menuPrincipal/menu_principal.dart';
 import 'package:flutter/material.dart';
 import 'pagina_cadastro.dart';
 import '../models/Usuario.dart';
@@ -26,7 +27,7 @@ class _LoginPageState extends State<PaginaLogin> {
       if (usuario != null) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const DashboardPage()),
+          MaterialPageRoute(builder: (context) => MenuPrincipal(usuario: usuario,)),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

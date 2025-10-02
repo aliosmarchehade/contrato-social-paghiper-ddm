@@ -1,8 +1,11 @@
+import 'package:contratosocial/models/Usuario.dart';
 import 'package:flutter/material.dart';
 import 'package:contratosocial/configuracao/rotas.dart';
 
 class MenuPrincipal extends StatelessWidget {
-  const MenuPrincipal({super.key});
+  final Usuario usuario;
+
+  const MenuPrincipal({super.key, required this.usuario});
 
   @override
   Widget build(BuildContext context) {
@@ -34,11 +37,11 @@ class MenuPrincipal extends StatelessWidget {
                   end: Alignment.bottomRight,
                 ),
               ),
-              accountName: const Text(
-                "Ali Osmar", //arrumar o nome aqui
+              accountName: Text(
+                usuario.nome, //arrumar o nome aqui
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
-              accountEmail: const Text(""),
+              accountEmail: Text(usuario.email),
               currentAccountPicture: const CircleAvatar(
                 backgroundColor: Colors.white,
                 child: Icon(Icons.person, size: 40, color: Color(0xFF0860DB)),
@@ -82,16 +85,18 @@ class MenuPrincipal extends StatelessWidget {
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
                 onTap: () {
-                  Navigator.of(context).pop(); //arrumar aqui
-                },
+              Navigator.of(context).pushNamedAndRemoveUntil(Rotas.login,
+              (Route<dynamic> route) => false, // remove todas as rotas anteriores
+  );
+},
+
               ),
             ),
           ],
         ),
       ),
-      body: const Center(
-        child: Text(
-          "Olá, seja bem-vindo",
+      body: Center(
+        child: Text("Olá, ${usuario.nome}, seja bem-vindo",
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
         ),
       ),

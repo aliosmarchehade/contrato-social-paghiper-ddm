@@ -27,13 +27,11 @@ class ContratoSocialApp extends StatelessWidget {
       theme: ThemeData(
         textTheme: GoogleFonts.poppinsTextTheme(),
       ),
-      initialRoute: Rotas.menuPrincipal,
+      initialRoute: Rotas.login,
       routes: {
-        Rotas.menuPrincipal: (context) => const MenuPrincipal(),
-        Rotas.lerContrato: (context) => const DashboardPage(),
         Rotas.login: (context) => const PaginaLogin(),
         Rotas.filtro: (context) => const FiltroContrato(),
-        // Rotas.lerContrato: (context) => const DashboardPage(),
+        Rotas.lerContrato: (context) => const DashboardPage(),
         // Rotas.lerContrato: (context) => const DashboardPage(),
         // Rotas.lerContrato: (context) => const DashboardPage(),
       },
