@@ -67,7 +67,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Colors.blueAccent,
+                        color: Colors.black,
                       ),
                     ),
                     const Divider(),
@@ -139,7 +139,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       alignment: Alignment.centerRight,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blueAccent,
+                          backgroundColor: Color(0xFF0860DB),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -162,20 +162,19 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text("Dashboard - Contrato Social"),
-        centerTitle: true,
-
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.blueAccent, Colors.lightBlue],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
+        title: const Text(
+          "Ler Contrato Social",
+          style: TextStyle(
+            color: Colors.white,
           ),
         ),
+        elevation: 10,
+        backgroundColor: Color(0xFF0860DB),
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -196,7 +195,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       const Icon(
                         Icons.description,
                         size: 60,
-                        color: Colors.blueAccent,
+                        color: Color(0xFF0860DB),
                       ),
                       const SizedBox(height: 16),
                       const Text(
@@ -209,7 +208,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       const SizedBox(height: 16),
                       ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blueAccent,
+                          backgroundColor: Color(0xFF0860DB),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 24,
                             vertical: 14,
@@ -232,38 +231,38 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
-              if (_fileName != null)
-                Card(
-                  color: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 3,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Arquivo Selecionado",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blueAccent,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(_fileName!),
-                        Text(
-                          _fileBytes != null
-                              ? "Arquivo carregado com ${_fileBytes!.length} bytes."
-                              : "Falha ao ler conteúdo.",
-                          style: const TextStyle(color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+              // const SizedBox(height: 24),
+              // if (_fileName != null)
+              //   Card(
+              //     color: Colors.white,
+              //     shape: RoundedRectangleBorder(
+              //       borderRadius: BorderRadius.circular(12),
+              //     ),
+              //     elevation: 3,
+              //     child: Padding(
+              //       padding: const EdgeInsets.all(16),
+              //       child: Column(
+              //         crossAxisAlignment: CrossAxisAlignment.start,
+              //         children: [
+              //           const Text(
+              //             "Arquivo Selecionado",
+              //             style: TextStyle(
+              //               fontWeight: FontWeight.bold,
+              //               color: Colors.blueAccent,
+              //             ),
+              //           ),
+              //           const SizedBox(height: 8),
+              //           Text(_fileName!),
+              //           Text(
+              //             _fileBytes != null
+              //                 ? "Arquivo carregado com ${_fileBytes!.length} bytes."
+              //                 : "Falha ao ler conteúdo.",
+              //             style: const TextStyle(color: Colors.grey),
+              //           ),
+              //         ],
+              //       ),
+              //     ),
+              //   ),
             ],
           ),
         ),

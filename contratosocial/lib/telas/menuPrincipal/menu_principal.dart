@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:contratosocial/configuracao/rotas.dart';
 
@@ -11,9 +10,9 @@ class MenuPrincipal extends StatelessWidget {
       backgroundColor: Colors.white, 
       appBar: AppBar(
         elevation: 10,
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: const Color(0xFF0860DB),
         iconTheme: const IconThemeData(
-          color: Colors.white, // deixa o ícone do menu branco
+          color: Colors.white, 
         ),
         title: const Text(
           "Contrato Social",
@@ -23,34 +22,69 @@ class MenuPrincipal extends StatelessWidget {
         ),
       ),
       drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
+        backgroundColor: Colors.white,
+        child: Column(
           children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blueAccent,
-              ),
-              child: Text(
-                "Menu",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
+
+            UserAccountsDrawerHeader(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFF0860DB), Color(0xFF3A8DFF)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
               ),
+              accountName: const Text(
+                "Ali Osmar", //arrumar o nome aqui
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+              accountEmail: const Text(""),
+              currentAccountPicture: const CircleAvatar(
+                backgroundColor: Colors.white,
+                child: Icon(Icons.person, size: 40, color: Color(0xFF0860DB)),
+              ),
             ),
-            ListTile(
-              leading: const Icon(Icons.description),
-              title: const Text("Ler contrato social"),
-              onTap: () {
-                Navigator.of(context).pushNamed(Rotas.lerContrato);
-              },
+
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.description, color: Color(0xFF0860DB)),
+                    title: const Text(
+                      "Ler contrato social",
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                    ),
+                    onTap: () {
+                      Navigator.of(context).pushNamed(Rotas.lerContrato);
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.people, color: Color(0xFF0860DB)),
+                    title: const Text(
+                      "Filtrar Sócios",
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                    ),
+                    onTap: () {
+                      Navigator.of(context).pushNamed(Rotas.filtro);
+                    },
+                  ),
+                ],
+              ),
             ),
-            ListTile(
-              leading: const Icon(Icons.people),
-              title: const Text("Filtrar Sócios"),
-              onTap: () {
-                Navigator.of(context).pushNamed(Rotas.filtro);
-              },
+
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ListTile(
+                leading: const Icon(Icons.logout, color: Colors.redAccent),
+                title: const Text(
+                  "Sair",
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                onTap: () {
+                  Navigator.of(context).pop(); //arrumar aqui
+                },
+              ),
             ),
           ],
         ),

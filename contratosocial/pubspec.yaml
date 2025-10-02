@@ -46,6 +46,7 @@ dependencies:
   sqflite_common_ffi:
   sqflite_common_ffi_web:
   cupertino_icons:
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:
