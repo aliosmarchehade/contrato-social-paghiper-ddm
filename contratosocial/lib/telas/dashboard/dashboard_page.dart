@@ -203,6 +203,7 @@ class _DashboardPageState extends State<DashboardPage> {
           style: TextStyle(color: Colors.white),
         ),
         elevation: 10,
+        shadowColor: Colors.black,
         backgroundColor: Color(0xFF0860DB),
       ),
       body: Center(

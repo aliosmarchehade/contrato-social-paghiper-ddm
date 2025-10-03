@@ -27,7 +27,10 @@ class _ListarSalvosState extends State<ListarSalvos> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        elevation: 10,
+        shadowColor: Colors.black,
         title: const Text('Contratos Salvos'),
         backgroundColor: const Color(0xFF0860DB),
         foregroundColor: Colors.white,

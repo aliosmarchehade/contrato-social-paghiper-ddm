@@ -13,6 +13,7 @@ class MenuPrincipal extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 10,
+        shadowColor: Colors.black,
         backgroundColor: const Color(0xFF0860DB),
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(

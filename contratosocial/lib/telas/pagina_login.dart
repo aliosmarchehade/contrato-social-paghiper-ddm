@@ -79,14 +79,18 @@ class _LoginPageState extends State<PaginaLogin> {
                     const SizedBox(height: 28),
                     TextFormField(
                       controller: _usuarioController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: "Usuário",
-                        prefixIcon: Icon(Icons.person),
-                        border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(
+                        prefixIcon: const Icon(Icons.person),
+                        border: const OutlineInputBorder(),
+                        focusedBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(color: Color(0xFF0860DB), width: 2.0),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
                           vertical: 14,
                           horizontal: 14,
                         ),
+                        labelStyle: const TextStyle(color: Colors.grey),
                       ),
                       validator:
                           (value) =>
@@ -98,14 +102,18 @@ class _LoginPageState extends State<PaginaLogin> {
                     TextFormField(
                       controller: _senhaController,
                       obscureText: true,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: "Senha",
-                        prefixIcon: Icon(Icons.lock),
-                        border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(
+                        prefixIcon: const Icon(Icons.lock),
+                        border: const OutlineInputBorder(),
+                        focusedBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(color: Color(0xFF0860DB), width: 2.0),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
                           vertical: 14,
                           horizontal: 14,
                         ),
+                        labelStyle: const TextStyle(color: Colors.grey),
                       ),
                       validator:
                           (value) =>
