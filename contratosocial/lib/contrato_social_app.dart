@@ -27,8 +27,7 @@ class ContratoSocialApp extends StatelessWidget {
         Rotas.filtro: (context) => const FiltroContrato(),
         Rotas.lerContrato: (context) => const DashboardPage(),
         Rotas.ListarSalvos: (context) => const ListarSalvos(),
-        // Rotas.lerContrato: (context) => const DashboardPage(),
-        // Rotas.lerContrato: (context) => const DashboardPage(),
+        //Rotas.menuPrincipal: (context) => const MenuPrincipal(usuario: usuario),
       },
     );
   }
