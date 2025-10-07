@@ -34,7 +34,7 @@ class MenuPrincipal extends StatelessWidget {
         backgroundColor: const Color(0xFF0860DB),
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
-          "Contrato Social",
+          "Contrato Social - Dashboard  ",
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -202,7 +202,10 @@ class MenuPrincipal extends StatelessWidget {
                         onPressed: () {
                           _showContractDialog(context, ultimoContrato);
                         },
-                        child: const Text("Ver detalhes"),
+                        child: const Text(
+                          "Ver detalhes", 
+                          style: TextStyle(color: Colors.white)
+                          ),
                       ),
                     )
                   ],
