@@ -5,14 +5,14 @@ import 'package:file_picker/file_picker.dart';
 import 'package:contratosocial/mock/mock_contrato.dart';
 import 'package:contratosocial/banco/contrato_social_dao.dart';
 
-class DashboardPage extends StatefulWidget {
-  const DashboardPage({super.key});
+class LerContrato extends StatefulWidget {
+  const LerContrato({super.key});
 
   @override
-  State<DashboardPage> createState() => _DashboardPageState();
+  State<LerContrato> createState() => _LerContratoState();
 }
 
-class _DashboardPageState extends State<DashboardPage> {
+class _LerContratoState extends State<LerContrato> {
   String? _fileName;
   Uint8List? _fileBytes;
 

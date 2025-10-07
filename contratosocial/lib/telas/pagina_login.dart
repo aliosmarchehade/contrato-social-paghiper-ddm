@@ -1,9 +1,10 @@
-import 'package:contratosocial/telas/dashboard/dashboard_page.dart';
-import 'package:contratosocial/telas/menuPrincipal/menu_principal.dart';
+import 'package:contratosocial/telas/lerContrato/ler_contrato.dart';
+import 'package:contratosocial/telas/dashboard/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'pagina_cadastro.dart';
 import '../models/Usuario.dart';
 import '../banco/database_helper.dart';
+import 'package:contratosocial/configuracao/rotas.dart';
 
 class PaginaLogin extends StatefulWidget {
   const PaginaLogin({super.key});
@@ -27,10 +28,13 @@ class _LoginPageState extends State<PaginaLogin> {
       if (usuario != null) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (context) => MenuPrincipal(usuario: usuario),
-          ),
+          MaterialPageRoute(builder: (context) => Dashboard(usuario: usuario)),
         );
+        // Navigator.pushReplacementNamed(
+        //   context,
+        //   Rotas.dashboard,
+        //   arguments: usuario,
+        // );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Usuário ou senha inválidos!")),
@@ -84,7 +88,10 @@ class _LoginPageState extends State<PaginaLogin> {
                         prefixIcon: const Icon(Icons.person),
                         border: const OutlineInputBorder(),
                         focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xFF0860DB), width: 2.0),
+                          borderSide: BorderSide(
+                            color: Color(0xFF0860DB),
+                            width: 2.0,
+                          ),
                         ),
                         contentPadding: const EdgeInsets.symmetric(
                           vertical: 14,
@@ -107,7 +114,10 @@ class _LoginPageState extends State<PaginaLogin> {
                         prefixIcon: const Icon(Icons.lock),
                         border: const OutlineInputBorder(),
                         focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xFF0860DB), width: 2.0),
+                          borderSide: BorderSide(
+                            color: Color(0xFF0860DB),
+                            width: 2.0,
+                          ),
                         ),
                         contentPadding: const EdgeInsets.symmetric(
                           vertical: 14,
