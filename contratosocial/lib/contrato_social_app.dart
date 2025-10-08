@@ -1,3 +1,5 @@
+import 'package:contratosocial/models/Usuario.dart';
+import 'package:contratosocial/telas/dashboard/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:contratosocial/configuracao/rotas.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -24,6 +26,20 @@ class ContratoSocialApp extends StatelessWidget {
         Rotas.filtrarContrato: (context) => const FiltroContrato(),
         Rotas.lerContrato: (context) => const LerContrato(),
         Rotas.listarContratosSalvos: (context) => const ListarSalvos(),
+
+        Rotas.dashboard: (context) {
+        final args = ModalRoute.of(context)!.settings.arguments;
+        if (args == null) {
+        // Se não veio nada, redireciona para login
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushReplacementNamed(context, Rotas.login);
+      });
+      return const SizedBox.shrink(); // retorna algo temporário
+  }
+
+  final usuario = args as Usuario;
+  return Dashboard(usuario: usuario);
+},
         //Rotas.menuPrincipal: (context) => const MenuPrincipal(usuario: usuario),
       },
     );

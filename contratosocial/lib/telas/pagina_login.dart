@@ -26,10 +26,12 @@ class _LoginPageState extends State<PaginaLogin> {
       final usuario = await DatabaseHelper().autenticarUsuario(nome, senha);
 
       if (usuario != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => Dashboard(usuario: usuario)),
-        );
+        
+        Navigator.pushReplacementNamed(
+        context,
+        Rotas.dashboard,
+        arguments: usuario,
+);
         // Navigator.pushReplacementNamed(
         //   context,
         //   Rotas.dashboard,
