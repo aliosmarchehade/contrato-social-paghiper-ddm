@@ -23,9 +23,9 @@ class ContratoSocialApp extends StatelessWidget {
       initialRoute: Rotas.login,
       routes: {
         Rotas.login: (context) => const PaginaLogin(),
-        Rotas.filtrarContrato: (context) => const FiltroContrato(),
+        //Rotas.filtrarContrato: (context) => const FiltroContrato(),
         Rotas.lerContrato: (context) => const LerContrato(),
-        Rotas.listarContratosSalvos: (context) => const ListarSalvos(),
+        //Rotas.listarContratosSalvos: (context) => const ListarSalvos(),
 
         Rotas.dashboard: (context) {
         final args = ModalRoute.of(context)!.settings.arguments;

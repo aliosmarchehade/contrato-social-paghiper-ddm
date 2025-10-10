@@ -358,57 +358,58 @@ class _LerContratoState extends State<LerContrato> {
     }
   }
 
-  Future<void> _saveMockToDatabase() async {
-    try {
-      // Endereços
-      for (var endereco in mockContratoBanco['endereco']!) {
-        await DAOEndereco().salvar(endereco);
-      }
-
-      // Empresas
-      for (var empresa in mockContratoBanco['empresa']!) {
-        await DAOEmpresa().salvar(empresa);
-      }
-
-      // Capital Social
-      for (var capital in mockContratoBanco['capital_social']!) {
-        await DAOCapitalSocial().salvar(capital);
-      }
-
-      // Administração
-      for (var adm in mockContratoBanco['administracao']!) {
-        await DAOAdministracao().salvar(adm);
-      }
-
-      // Duração Exercício Social
-      for (var duracao in mockContratoBanco['duracao_exercicio_social']!) {
-        await DAODuracaoExercicioSocial().salvar(duracao);
-      }
-
-      // Contrato Social
-      for (var contrato in mockContratoBanco['contrato_social']!) {
-        await DAOContratoSocial().salvar(contrato);
-      }
-
-      // Sócios
-      for (var socio in mockContratoBanco['socio']!) {
-        await DAOSocio().salvar(socio);
-      }
-
-      // Cláusulas
-      for (var clausula in mockContratoBanco['clausulas']!) {
-        await DAOClausulas().salvar(clausula);
-      }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Mock inserido no banco com sucesso!")),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Erro ao inserir mock no banco: $e")),
-      );
+Future<void> _saveMockToDatabase() async {
+  try {
+    // Endereços
+    for (var endereco in mockEnderecos) {
+      await DAOEndereco().salvar(endereco);
     }
+
+    // Empresas
+    for (var empresa in mockEmpresas) {
+      await DAOEmpresa().salvar(empresa);
+    }
+
+    // Capital Social
+    for (var capital in mockCapitalSocial) {
+      await DAOCapitalSocial().salvar(capital);
+    }
+
+    // Administração
+    for (var adm in mockAdministracao) {
+      await DAOAdministracao().salvar(adm);
+    }
+
+    // Duração Exercício Social
+    for (var duracao in mockDuracaoExercicio) {
+      await DAODuracaoExercicioSocial().salvar(duracao);
+    }
+
+    // Contrato Social
+    for (var contrato in mockContratoSocial) {
+      await DAOContratoSocial().salvar(contrato);
+    }
+
+    // Sócios
+    for (var socio in mockSocios) {
+      await DAOSocio().salvar(socio);
+    }
+
+    // Cláusulas
+    for (var clausula in mockClausulas) {
+      await DAOClausulas().salvar(clausula);
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Mock inserido no banco com sucesso!")),
+    );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Erro ao inserir mock no banco: $e")),
+    );
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
