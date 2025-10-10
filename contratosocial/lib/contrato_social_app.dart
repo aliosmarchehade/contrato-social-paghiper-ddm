@@ -1,4 +1,4 @@
-import 'package:contratosocial/models/Usuario.dart';
+import 'package:contratosocial/models/usuario.dart';
 import 'package:contratosocial/telas/dashboard/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:contratosocial/configuracao/rotas.dart';

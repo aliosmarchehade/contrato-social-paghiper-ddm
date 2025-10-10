@@ -1,12 +1,12 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:contratosocial/banco/sqlite/conexao.dart';
 import 'package:contratosocial/models/contrato_social.dart';
-import 'package:contratosocial/models/Empresa.dart';
+import 'package:contratosocial/models/empresa.dart';
 import 'package:contratosocial/models/endereco.dart';
 import 'package:contratosocial/models/capital_social.dart';
 import 'package:contratosocial/models/administracao.dart';
 import 'package:contratosocial/models/duracao_exercicio_social.dart';
-import 'package:contratosocial/models/Socio.dart';
+import 'package:contratosocial/models/socio.dart';
 import 'package:contratosocial/models/clausulas.dart';
 
 class ContratoSocialDao {

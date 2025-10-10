@@ -2,7 +2,7 @@ import 'package:contratosocial/telas/lerContrato/ler_contrato.dart';
 import 'package:contratosocial/telas/dashboard/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'pagina_cadastro.dart';
-import '../models/Usuario.dart';
+import '../models/usuario.dart';
 import '../banco/database_helper.dart';
 import 'package:contratosocial/configuracao/rotas.dart';
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/Usuario.dart';
+import '../models/usuario.dart';
 import '../banco/database_helper.dart';
 
 class PaginaCadastro extends StatefulWidget {
