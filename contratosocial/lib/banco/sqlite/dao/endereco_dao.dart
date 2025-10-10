@@ -1,17 +1,24 @@
-import 'package:sqflite/sqflite.dart';
-import '../../../models/endereco.dart';
-import '../conexao.dart';
+import 'package:contratosocial/banco/sqlite/conexao_sqlite.dart';
+import 'package:contratosocial/models/endereco.dart';
 
-class EnderecoDao {
+class DAOEndereco {
   static const String _tabela = 'endereco';
 
   /// Insere ou atualiza um endereço no banco
-  Future<int> salvar(Endereco endereco) async {
-    final Database db = await Conexao.iniciar();
-    final dados = endereco.toMap();
+  Future<int> salvar(DTOEndereco endereco) async {
+    final db = await ConexaoSQLite.database;
+
+    final dados = {
+      'logradouro': endereco.logradouro,
+      'numero': endereco.numero,
+      'bairro': endereco.bairro,
+      'cidade': endereco.cidade,
+      'estado': endereco.estado,
+      'cep': endereco.cep,
+      'complemento': endereco.complemento,
+    };
 
     if (endereco.id != null) {
-      // Atualiza registro existente
       return await db.update(
         _tabela,
         dados,
@@ -19,22 +26,32 @@ class EnderecoDao {
         whereArgs: [endereco.id],
       );
     } else {
-      // Insere novo registro
       return await db.insert(_tabela, dados);
     }
   }
 
-  /// Lista todos os endereços cadastrados
-  Future<List<Endereco>> listar() async {
-    final Database db = await Conexao.iniciar();
+  /// Busca todos os endereços cadastrados
+  Future<List<DTOEndereco>> buscarTodos() async {
+    final db = await ConexaoSQLite.database;
     final resultado = await db.query(_tabela);
 
-    return resultado.map((linha) => Endereco.fromMap(linha)).toList();
+    return resultado.map((linha) {
+      return DTOEndereco(
+        id: linha['id'] as int?,
+        logradouro: linha['logradouro'] as String,
+        numero: linha['numero'] as String,
+        bairro: linha['bairro'] as String,
+        cidade: linha['cidade'] as String,
+        estado: linha['estado'] as String,
+        cep: linha['cep'] as String,
+        complemento: linha['complemento'] as String?,
+      );
+    }).toList();
   }
 
   /// Busca um endereço específico pelo ID
-  Future<Endereco?> buscarPorId(int id) async {
-    final Database db = await Conexao.iniciar();
+  Future<DTOEndereco?> buscarPorId(int id) async {
+    final db = await ConexaoSQLite.database;
     final resultado = await db.query(
       _tabela,
       where: 'id = ?',
@@ -42,14 +59,24 @@ class EnderecoDao {
     );
 
     if (resultado.isNotEmpty) {
-      return Endereco.fromMap(resultado.first);
+      final linha = resultado.first;
+      return DTOEndereco(
+        id: linha['id'] as int?,
+        logradouro: linha['logradouro'] as String,
+        numero: linha['numero'] as String,
+        bairro: linha['bairro'] as String,
+        cidade: linha['cidade'] as String,
+        estado: linha['estado'] as String,
+        cep: linha['cep'] as String,
+        complemento: linha['complemento'] as String?,
+      );
     }
     return null;
   }
 
-  /// Remove um endereço pelo ID
-  Future<int> remover(int id) async {
-    final Database db = await Conexao.iniciar();
+  /// Exclui um endereço do banco
+  Future<int> excluir(int id) async {
+    final db = await ConexaoSQLite.database;
     return await db.delete(
       _tabela,
       where: 'id = ?',

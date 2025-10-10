@@ -1,22 +1,23 @@
-import 'package:contratosocial/models/endereco.dart';
+import 'package:contratosocial/models/dto.dart';
 
-class Socio {
-  int? id;
-  String nome;
-  String documento;
-  Endereco endereco;
-  String profissao;
-  double percentual;
-  String tipo;
-  String nacionalidade;
-  String estadoCivil;
-  int? contratoSocialId;
+class DTOSocio implements DTO {
+  @override
+  final int? id;
+  final String nome;
+  final String documento;
+  final int enderecoId; // FK
+  final String profissao;
+  final double percentual;
+  final String tipo;
+  final String nacionalidade;
+  final String estadoCivil;
+  final int? contratoSocialId; // FK opcional
 
-  Socio({
+  DTOSocio({
     this.id,
     required this.nome,
     required this.documento,
-    required this.endereco,
+    required this.enderecoId,
     required this.profissao,
     required this.percentual,
     required this.tipo,
@@ -24,34 +25,4 @@ class Socio {
     required this.estadoCivil,
     this.contratoSocialId,
   });
-
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'nome': nome,
-      'documento': documento,
-      'endereco_id': endereco.id,
-      'profissao': profissao,
-      'percentual': percentual,
-      'tipo': tipo,
-      'nacionalidade': nacionalidade,
-      'estado_civil': estadoCivil,
-      'contrato_social_id': contratoSocialId,
-    };
-  }
-
-  factory Socio.fromMap(Map<String, dynamic> map, Endereco endereco) {
-    return Socio(
-      id: map['id'],
-      nome: map['nome'],
-      documento: map['documento'],
-      endereco: endereco,
-      profissao: map['profissao'],
-      percentual: map['percentual'],
-      tipo: map['tipo'],
-      nacionalidade: map['nacionalidade'],
-      estadoCivil: map['estado_civil'],
-      contratoSocialId: map['contrato_social_id'],
-    );
-  }
 }

@@ -1,17 +1,20 @@
-import 'package:sqflite/sqflite.dart';
-import '../../../models/duracao_exercicio_social.dart';
-import '../conexao.dart';
+import 'package:contratosocial/banco/sqlite/conexao_sqlite.dart';
+import 'package:contratosocial/models/duracao_exercicio_social.dart';
 
-class DuracaoExercicioSocialDao {
+class DAODuracaoExercicioSocial {
   static const String _tabela = 'duracao_exercicio_social';
 
-  /// Insere ou atualiza uma duração de exercício social
-  Future<int> salvar(DuracaoExercicioSocial duracao) async {
-    final Database db = await Conexao.iniciar();
-    final dados = duracao.toMap();
+  /// Insere ou atualiza um registro de duração do exercício social
+  Future<int> salvar(DTODuracaoExercicioSocial duracao) async {
+    final db = await ConexaoSQLite.database;
+
+    final dados = {
+      'periodo': duracao.periodo,
+      'data_inicio': duracao.dataInicio.toIso8601String(),
+      'data_fim': duracao.dataFim.toIso8601String(),
+    };
 
     if (duracao.id != null) {
-      // Atualiza registro existente
       return await db.update(
         _tabela,
         dados,
@@ -19,34 +22,53 @@ class DuracaoExercicioSocialDao {
         whereArgs: [duracao.id],
       );
     } else {
-      // Insere novo registro
       return await db.insert(_tabela, dados);
     }
   }
 
-  /// Lista todas as durações de exercício social cadastradas
-  Future<List<DuracaoExercicioSocial>> listar() async {
-    final Database db = await Conexao.iniciar();
+  /// Busca todas as durações cadastradas
+  Future<List<DTODuracaoExercicioSocial>> buscarTodos() async {
+    final db = await ConexaoSQLite.database;
     final resultado = await db.query(_tabela);
-    return resultado
-        .map((linha) => DuracaoExercicioSocial.fromMap(linha))
-        .toList();
+
+    return resultado.map((linha) {
+      return DTODuracaoExercicioSocial(
+        id: linha['id'] as int?,
+        periodo: linha['periodo'] as String,
+        dataInicio: DateTime.parse(linha['data_inicio'] as String),
+        dataFim: DateTime.parse(linha['data_fim'] as String),
+      );
+    }).toList();
   }
 
   /// Busca uma duração específica pelo ID
-  Future<DuracaoExercicioSocial?> buscarPorId(int id) async {
-    final Database db = await Conexao.iniciar();
-    final resultado = await db.query(_tabela, where: 'id = ?', whereArgs: [id]);
+  Future<DTODuracaoExercicioSocial?> buscarPorId(int id) async {
+    final db = await ConexaoSQLite.database;
+    final resultado = await db.query(
+      _tabela,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
 
     if (resultado.isNotEmpty) {
-      return DuracaoExercicioSocial.fromMap(resultado.first);
+      final linha = resultado.first;
+      return DTODuracaoExercicioSocial(
+        id: linha['id'] as int?,
+        periodo: linha['periodo'] as String,
+        dataInicio: DateTime.parse(linha['data_inicio'] as String),
+        dataFim: DateTime.parse(linha['data_fim'] as String),
+      );
     }
     return null;
   }
 
-  /// Remove uma duração de exercício social pelo ID
-  Future<int> remover(int id) async {
-    final Database db = await Conexao.iniciar();
-    return await db.delete(_tabela, where: 'id = ?', whereArgs: [id]);
+  /// Exclui uma duração do banco
+  Future<int> excluir(int id) async {
+    final db = await ConexaoSQLite.database;
+    return await db.delete(
+      _tabela,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 }

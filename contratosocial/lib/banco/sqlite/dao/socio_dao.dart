@@ -1,19 +1,26 @@
-  import 'package:sqflite/sqflite.dart';
-import '../../../models/socio.dart';
-import '../../../models/endereco.dart';
-import '../conexao.dart';
-import 'endereco_dao.dart';
+import 'package:contratosocial/banco/sqlite/conexao_sqlite.dart';
+import 'package:contratosocial/models/socio.dart';
 
-class SocioDao {
+class DAOSocio {
   static const String _tabela = 'socio';
 
-  /// Insere ou atualiza um sócio
-  Future<int> salvar(Socio socio) async {
-    final Database db = await Conexao.iniciar();
-    final dados = socio.toMap();
+  /// Salva ou atualiza um sócio
+  Future<int> salvar(DTOSocio socio) async {
+    final db = await ConexaoSQLite.database;
+
+    final dados = {
+      'nome': socio.nome,
+      'documento': socio.documento,
+      'endereco_id': socio.enderecoId,
+      'profissao': socio.profissao,
+      'percentual': socio.percentual,
+      'tipo': socio.tipo,
+      'nacionalidade': socio.nacionalidade,
+      'estado_civil': socio.estadoCivil,
+      'contrato_social_id': socio.contratoSocialId,
+    };
 
     if (socio.id != null) {
-      // Atualiza registro existente
       return await db.update(
         _tabela,
         dados,
@@ -21,76 +28,90 @@ class SocioDao {
         whereArgs: [socio.id],
       );
     } else {
-      // Insere novo registro
       return await db.insert(_tabela, dados);
     }
   }
 
-  /// Lista todos os sócios cadastrados
-  Future<List<Socio>> listar() async {
-    final Database db = await Conexao.iniciar();
+  /// Busca todos os sócios
+  Future<List<DTOSocio>> buscarTodos() async {
+    final db = await ConexaoSQLite.database;
     final resultado = await db.query(_tabela);
 
-    List<Socio> socios = [];
-
-    for (var linha in resultado) {
-      final enderecoId = linha['endereco_id'] as int;
-      final enderecoDao = EnderecoDao();
-      final endereco = await enderecoDao.buscarPorId(enderecoId);
-
-      if (endereco != null) {
-        socios.add(Socio.fromMap(linha, endereco));
-      }
-    }
-
-    return socios;
+    return resultado.map((linha) {
+      return DTOSocio(
+        id: linha['id'] as int?,
+        nome: linha['nome'] as String,
+        documento: linha['documento'] as String,
+        enderecoId: linha['endereco_id'] as int,
+        profissao: linha['profissao'] as String,
+        percentual: (linha['percentual'] as num).toDouble(),
+        tipo: linha['tipo'] as String,
+        nacionalidade: linha['nacionalidade'] as String,
+        estadoCivil: linha['estado_civil'] as String,
+        contratoSocialId: linha['contrato_social_id'] as int?,
+      );
+    }).toList();
   }
 
-  /// Lista sócios de um contrato social específico
-  Future<List<Socio>> listarPorContrato(int contratoSocialId) async {
-    final Database db = await Conexao.iniciar();
+  /// Busca um sócio pelo ID
+  Future<DTOSocio?> buscarPorId(int id) async {
+    final db = await ConexaoSQLite.database;
     final resultado = await db.query(
       _tabela,
-      where: 'contrato_social_id = ?',
-      whereArgs: [contratoSocialId],
+      where: 'id = ?',
+      whereArgs: [id],
     );
-
-    List<Socio> socios = [];
-
-    for (var linha in resultado) {
-      final enderecoId = linha['endereco_id'] as int;
-      final enderecoDao = EnderecoDao();
-      final endereco = await enderecoDao.buscarPorId(enderecoId);
-
-      if (endereco != null) {
-        socios.add(Socio.fromMap(linha, endereco));
-      }
-    }
-
-    return socios;
-  }
-
-  /// Busca um sócio específico pelo ID
-  Future<Socio?> buscarPorId(int id) async {
-    final Database db = await Conexao.iniciar();
-    final resultado = await db.query(_tabela, where: 'id = ?', whereArgs: [id]);
 
     if (resultado.isNotEmpty) {
       final linha = resultado.first;
-      final enderecoId = linha['endereco_id'] as int;
-      final enderecoDao = EnderecoDao();
-      final endereco = await enderecoDao.buscarPorId(enderecoId);
-
-      if (endereco != null) {
-        return Socio.fromMap(linha, endereco);
-      }
+      return DTOSocio(
+        id: linha['id'] as int?,
+        nome: linha['nome'] as String,
+        documento: linha['documento'] as String,
+        enderecoId: linha['endereco_id'] as int,
+        profissao: linha['profissao'] as String,
+        percentual: (linha['percentual'] as num).toDouble(),
+        tipo: linha['tipo'] as String,
+        nacionalidade: linha['nacionalidade'] as String,
+        estadoCivil: linha['estado_civil'] as String,
+        contratoSocialId: linha['contrato_social_id'] as int?,
+      );
     }
     return null;
   }
 
-  /// Remove um sócio pelo ID
-  Future<int> remover(int id) async {
-    final Database db = await Conexao.iniciar();
-    return await db.delete(_tabela, where: 'id = ?', whereArgs: [id]);
+  /// Exclui um sócio
+  Future<int> excluir(int id) async {
+    final db = await ConexaoSQLite.database;
+    return await db.delete(
+      _tabela,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  /// Busca todos os sócios de um contrato específico
+  Future<List<DTOSocio>> buscarPorContratoSocial(int contratoId) async {
+    final db = await ConexaoSQLite.database;
+    final resultado = await db.query(
+      _tabela,
+      where: 'contrato_social_id = ?',
+      whereArgs: [contratoId],
+    );
+
+    return resultado.map((linha) {
+      return DTOSocio(
+        id: linha['id'] as int?,
+        nome: linha['nome'] as String,
+        documento: linha['documento'] as String,
+        enderecoId: linha['endereco_id'] as int,
+        profissao: linha['profissao'] as String,
+        percentual: (linha['percentual'] as num).toDouble(),
+        tipo: linha['tipo'] as String,
+        nacionalidade: linha['nacionalidade'] as String,
+        estadoCivil: linha['estado_civil'] as String,
+        contratoSocialId: linha['contrato_social_id'] as int?,
+      );
+    }).toList();
   }
 }

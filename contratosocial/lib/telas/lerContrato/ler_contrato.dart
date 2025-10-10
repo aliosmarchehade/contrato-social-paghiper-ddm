@@ -3,7 +3,7 @@ import 'package:contratosocial/models/usuario.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:contratosocial/mock/mock_contrato.dart';
-import 'package:contratosocial/banco/contrato_social_dao.dart';
+import 'package:contratosocial/banco/contrato_social_dao_segundo_plano.dart';
 
 class LerContrato extends StatefulWidget {
   const LerContrato({super.key});

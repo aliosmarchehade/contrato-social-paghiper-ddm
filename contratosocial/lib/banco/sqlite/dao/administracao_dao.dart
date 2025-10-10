@@ -1,60 +1,71 @@
-import 'package:sqflite/sqflite.dart';
-import '../../../models/administracao.dart';
-import '../conexao.dart';
+import 'package:contratosocial/banco/sqlite/conexao_sqlite.dart';
+import 'package:contratosocial/models/administracao.dart';
 
-class AdministracaoDao {
+class DAOAdministracao {
   static const String _tabela = 'administracao';
 
-  Future<int> salvar(Administracao adm) async {
-    final db = await Conexao.iniciar();
+  /// Insere ou atualiza uma administração no banco
+  Future<int> salvar(DTOAdministracao administracao) async {
+    final db = await ConexaoSQLite.database;
 
-    if (adm.id != null) {
-      // Atualiza
+    final dados = {
+      'tipo_administracao': administracao.tipoAdministracao,
+      'regras': administracao.regras,
+    };
+
+    if (administracao.id != null) {
       return await db.update(
         _tabela,
-        {'tipo_administracao': adm.tipoAdministracao, 'regras': adm.regras},
+        dados,
         where: 'id = ?',
-        whereArgs: [adm.id],
+        whereArgs: [administracao.id],
       );
     } else {
-      // Insere
-      return await db.insert(_tabela, {
-        'tipo_administracao': adm.tipoAdministracao,
-        'regras': adm.regras,
-      });
+      return await db.insert(_tabela, dados);
     }
   }
 
-  Future<List<Administracao>> listar() async {
-    final db = await Conexao.iniciar();
+  /// Busca todas as administrações cadastradas
+  Future<List<DTOAdministracao>> buscarTodos() async {
+    final db = await ConexaoSQLite.database;
     final resultado = await db.query(_tabela);
 
-    return resultado.map((r) {
-      return Administracao(
-        id: r['id'] as int,
-        tipoAdministracao: r['tipo_administracao'] as String,
-        regras: r['regras'] as String,
+    return resultado.map((linha) {
+      return DTOAdministracao(
+        id: linha['id'] as int?,
+        tipoAdministracao: linha['tipo_administracao'] as String,
+        regras: linha['regras'] as String,
       );
     }).toList();
   }
 
-  Future<Administracao?> buscarPorId(int id) async {
-    final db = await Conexao.iniciar();
-    final resultado = await db.query(_tabela, where: 'id = ?', whereArgs: [id]);
+  /// Busca uma administração pelo ID
+  Future<DTOAdministracao?> buscarPorId(int id) async {
+    final db = await ConexaoSQLite.database;
+    final resultado = await db.query(
+      _tabela,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
 
     if (resultado.isNotEmpty) {
-      final r = resultado.first;
-      return Administracao(
-        id: r['id'] as int,
-        tipoAdministracao: r['tipo_administracao'] as String,
-        regras: r['regras'] as String,
+      final linha = resultado.first;
+      return DTOAdministracao(
+        id: linha['id'] as int?,
+        tipoAdministracao: linha['tipo_administracao'] as String,
+        regras: linha['regras'] as String,
       );
     }
     return null;
   }
 
-  Future<int> remover(int id) async {
-    final db = await Conexao.iniciar();
-    return await db.delete(_tabela, where: 'id = ?', whereArgs: [id]);
+  /// Exclui uma administração do banco
+  Future<int> excluir(int id) async {
+    final db = await ConexaoSQLite.database;
+    return await db.delete(
+      _tabela,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 }

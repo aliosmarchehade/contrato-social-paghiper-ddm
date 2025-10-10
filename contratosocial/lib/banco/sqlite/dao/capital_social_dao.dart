@@ -1,17 +1,19 @@
-import 'package:sqflite/sqflite.dart';
-import '../../../models/capital_social.dart';
-import '../conexao.dart';
+import 'package:contratosocial/banco/sqlite/conexao_sqlite.dart';
+import 'package:contratosocial/models/capital_social.dart';
 
-class CapitalSocialDao {
+class DAOCapitalSocial {
   static const String _tabela = 'capital_social';
 
-  /// Insere ou atualiza um capital social
-  Future<int> salvar(CapitalSocial capital) async {
-    final Database db = await Conexao.iniciar();
-    final dados = capital.toMap();
+  Future<int> salvar(DTOCapitalSocial capital) async {
+    final db = await ConexaoSQLite.database;
+
+    final dados = {
+      'valor_total': capital.valorTotal,
+      'forma_integralizacao': capital.formaIntegralizacao,
+      'prazo_integralizacao': capital.prazoIntegralizacao,
+    };
 
     if (capital.id != null) {
-      // Atualiza registro existente
       return await db.update(
         _tabela,
         dados,
@@ -19,32 +21,42 @@ class CapitalSocialDao {
         whereArgs: [capital.id],
       );
     } else {
-      // Insere novo registro
       return await db.insert(_tabela, dados);
     }
   }
 
-  /// Lista todos os capitais sociais cadastrados
-  Future<List<CapitalSocial>> listar() async {
-    final Database db = await Conexao.iniciar();
+  Future<List<DTOCapitalSocial>> buscarTodos() async {
+    final db = await ConexaoSQLite.database;
     final resultado = await db.query(_tabela);
-    return resultado.map((linha) => CapitalSocial.fromMap(linha)).toList();
+
+    return resultado.map((linha) {
+      return DTOCapitalSocial(
+        id: linha['id'] as int?,
+        valorTotal: (linha['valor_total'] as num).toDouble(),
+        formaIntegralizacao: linha['forma_integralizacao'] as String,
+        prazoIntegralizacao: linha['prazo_integralizacao'] as String,
+      );
+    }).toList();
   }
 
-  /// Busca um capital social específico pelo ID
-  Future<CapitalSocial?> buscarPorId(int id) async {
-    final Database db = await Conexao.iniciar();
+  Future<DTOCapitalSocial?> buscarPorId(int id) async {
+    final db = await ConexaoSQLite.database;
     final resultado = await db.query(_tabela, where: 'id = ?', whereArgs: [id]);
 
     if (resultado.isNotEmpty) {
-      return CapitalSocial.fromMap(resultado.first);
+      final linha = resultado.first;
+      return DTOCapitalSocial(
+        id: linha['id'] as int?,
+        valorTotal: (linha['valor_total'] as num).toDouble(),
+        formaIntegralizacao: linha['forma_integralizacao'] as String,
+        prazoIntegralizacao: linha['prazo_integralizacao'] as String,
+      );
     }
     return null;
   }
 
-  /// Remove um capital social pelo ID
-  Future<int> remover(int id) async {
-    final Database db = await Conexao.iniciar();
+  Future<int> excluir(int id) async {
+    final db = await ConexaoSQLite.database;
     return await db.delete(_tabela, where: 'id = ?', whereArgs: [id]);
   }
 }

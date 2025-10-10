@@ -1,147 +1,80 @@
-// import 'package:sqflite/sqflite.dart';
-// import '../../../models/empresa.dart';
-// import '../../../models/endereco.dart';
-// import '../../../banco/sqlite/conexao.dart';
-// import 'endereco_dao.dart'; // você deve ter um DAO de endereço
+import 'package:contratosocial/banco/sqlite/conexao_sqlite.dart';
+import 'package:contratosocial/models/empresa.dart';
 
-// class EmpresaDao {
-//   static const String _tabela = 'empresa';
-
-//   Future<int> salvar(Empresa empresa) async {
-//     final Database db = await Conexao.iniciar();
-
-//     final dados = empresa.toMap();
-
-//     if (empresa.id != null) {
-//       // Atualiza se já existir
-//       return await db.update(
-//         _tabela,
-//         dados,
-//         where: 'id = ?',
-//         whereArgs: [empresa.id],
-//       );
-//     } else {
-//       // Insere novo registro
-//       return await db.insert(_tabela, dados);
-//     }
-//   }
-
-//   Future<List<Empresa>> listar() async {
-//     final Database db = await Conexao.iniciar();
-//     final resultado = await db.query(_tabela);
-
-//     List<Empresa> empresas = [];
-
-//     for (var linha in resultado) {
-//       final enderecoId = linha['endereco_id'] as int;
-
-//       // Busca o endereço relacionado
-//       EnderecoDao enderecoDao = EnderecoDao();
-//       Endereco? endereco = await enderecoDao.buscarPorId(enderecoId);
-
-//       if (endereco != null) {
-//         empresas.add(Empresa.fromMap(linha, endereco));
-//       }
-//     }
-
-//     return empresas;
-//   }
-
-//   Future<Empresa?> buscarPorId(int id) async {
-//     final Database db = await Conexao.iniciar();
-//     final resultado = await db.query(
-//       _tabela,
-//       where: 'id = ?',
-//       whereArgs: [id],
-//     );
-
-//     if (resultado.isNotEmpty) {
-//       final linha = resultado.first;
-//       final enderecoId = linha['endereco_id'] as int;
-
-//       EnderecoDao enderecoDao = EnderecoDao();
-//       Endereco? endereco = await enderecoDao.buscarPorId(enderecoId);
-
-//       if (endereco != null) {
-//         return Empresa.fromMap(linha, endereco);
-//       }
-//     }
-//     return null;
-//   }
-
-//   Future<int> remover(int id) async {
-//     final Database db = await Conexao.iniciar();
-//     return await db.delete(
-//       _tabela,
-//       where: 'id = ?',
-//       whereArgs: [id],
-//     );
-//   }
-// }
-import 'package:sqflite/sqflite.dart';
-import '../conexao.dart';
-import '../../../../models/empresa.dart';
-
-class EmpresaDao {
+class DAOEmpresa {
   static const String _tabela = 'empresa';
 
-  Future<int> salvar(Empresa empresa) async {
-    final db = await Conexao.iniciar();
+  /// Insere ou atualiza uma empresa no banco
+  Future<int> salvar(DTOEmpresa empresa) async {
+    final db = await ConexaoSQLite.database;
+
+    final dados = {
+      'nome_empresarial': empresa.nomeEmpresarial,
+      'cnpj': empresa.cnpj,
+      'endereco_id': empresa.enderecoId,
+      'objeto_social': empresa.objetoSocial,
+      'duracao_sociedade': empresa.duracaoSociedade,
+    };
 
     if (empresa.id != null) {
-      // Atualiza
       return await db.update(
         _tabela,
-        {
-          'nome': empresa.nome,
-          'cnpj': empresa.cnpj,
-          'atividade': empresa.atividade,
-        },
+        dados,
         where: 'id = ?',
         whereArgs: [empresa.id],
       );
     } else {
-      // Insere
-      return await db.insert(_tabela, {
-        'nome': empresa.nome,
-        'cnpj': empresa.cnpj,
-        'atividade': empresa.atividade,
-      });
+      return await db.insert(_tabela, dados);
     }
   }
 
-  Future<List<Empresa>> listar() async {
-    final db = await Conexao.iniciar();
+  /// Busca todas as empresas cadastradas
+  Future<List<DTOEmpresa>> buscarTodos() async {
+    final db = await ConexaoSQLite.database;
     final resultado = await db.query(_tabela);
 
     return resultado.map((linha) {
-      return Empresa(
-        id: linha['id'] as int,
-        nome: linha['nome'] as String,
+      return DTOEmpresa(
+        id: linha['id'] as int?,
+        nomeEmpresarial: linha['nome_empresarial'] as String,
         cnpj: linha['cnpj'] as String,
-        atividade: linha['atividade'] as String,
+        enderecoId: linha['endereco_id'] as int,
+        objetoSocial: linha['objeto_social'] as String,
+        duracaoSociedade: linha['duracao_sociedade'] as String,
       );
     }).toList();
   }
 
-  Future<Empresa?> buscarPorId(int id) async {
-    final db = await Conexao.iniciar();
-    final resultado = await db.query(_tabela, where: 'id = ?', whereArgs: [id]);
+  /// Busca uma empresa específica pelo ID
+  Future<DTOEmpresa?> buscarPorId(int id) async {
+    final db = await ConexaoSQLite.database;
+    final resultado = await db.query(
+      _tabela,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
 
     if (resultado.isNotEmpty) {
       final linha = resultado.first;
-      return Empresa(
-        id: linha['id'] as int,
-        nome: linha['nome'] as String,
+      return DTOEmpresa(
+        id: linha['id'] as int?,
+        nomeEmpresarial: linha['nome_empresarial'] as String,
         cnpj: linha['cnpj'] as String,
-        atividade: linha['atividade'] as String,
+        enderecoId: linha['endereco_id'] as int,
+        objetoSocial: linha['objeto_social'] as String,
+        duracaoSociedade: linha['duracao_sociedade'] as String,
       );
     }
     return null;
   }
 
-  Future<int> remover(int id) async {
-    final db = await Conexao.iniciar();
-    return await db.delete(_tabela, where: 'id = ?', whereArgs: [id]);
+  /// Exclui uma empresa do banco
+  Future<int> excluir(int id) async {
+    final db = await ConexaoSQLite.database;
+    return await db.delete(
+      _tabela,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 }

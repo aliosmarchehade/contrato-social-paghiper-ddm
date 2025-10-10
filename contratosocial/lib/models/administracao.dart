@@ -1,27 +1,14 @@
-class Administracao {
-  int? id;
-  String tipoAdministracao;
-  String regras;
+import 'package:contratosocial/models/dto.dart';
 
-  Administracao({
+class DTOAdministracao implements DTO {
+  @override
+  final int? id;
+  final String tipoAdministracao;
+  final String regras;
+
+  DTOAdministracao({
     this.id,
     required this.tipoAdministracao,
     required this.regras,
   });
-
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'tipo_administracao': tipoAdministracao,
-      'regras': regras,
-    };
-  }
-
-  factory Administracao.fromMap(Map<String, dynamic> map) {
-    return Administracao(
-      id: map['id'],
-      tipoAdministracao: map['tipo_administracao'],
-      regras: map['regras'],
-    );
-  }
 }

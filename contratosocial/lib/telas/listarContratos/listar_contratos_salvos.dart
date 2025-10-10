@@ -1,4 +1,4 @@
-import 'package:contratosocial/banco/contrato_social_dao.dart';
+import 'package:contratosocial/banco/contrato_social_dao_segundo_plano.dart';
 import 'package:contratosocial/models/contrato_social.dart';
 import 'package:flutter/material.dart';
 

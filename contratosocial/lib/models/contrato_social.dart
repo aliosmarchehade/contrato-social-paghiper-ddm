@@ -1,64 +1,22 @@
-import 'package:contratosocial/models/empresa.dart';
-import 'package:contratosocial/models/socio.dart';
-import 'package:contratosocial/models/administracao.dart';
-import 'package:contratosocial/models/capital_social.dart';
-import 'package:contratosocial/models/clausulas.dart';
-import 'package:contratosocial/models/duracao_exercicio_social.dart';
+import 'package:contratosocial/models/dto.dart';
 
-class ContratoSocial {
-  int? id;
-  DateTime dataUpload;
-  DateTime dataProcessamento;
-  Empresa empresa;
-  List<Socio> socios;
-  Administracao administracao;
-  CapitalSocial capitalSocial;
-  DuracaoExercicioSocial duracaoExercicio;
-  List<Clausulas> clausulas;
+class DTOContratoSocial implements DTO {
+  @override
+  final int? id;
+  final DateTime dataUpload;
+  final DateTime dataProcessamento;
+  final int empresaId;
+  final int administracaoId;
+  final int capitalSocialId;
+  final int duracaoExercicioId;
 
-  ContratoSocial({
+  DTOContratoSocial({
     this.id,
     required this.dataUpload,
     required this.dataProcessamento,
-    required this.empresa,
-    required this.socios,
-    required this.administracao,
-    required this.capitalSocial,
-    required this.duracaoExercicio,
-    required this.clausulas,
+    required this.empresaId,
+    required this.administracaoId,
+    required this.capitalSocialId,
+    required this.duracaoExercicioId,
   });
-
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'data_upload': dataUpload.toIso8601String(),
-      'data_processamento': dataProcessamento.toIso8601String(),
-      'empresa_id': empresa.id,
-      'administracao_id': administracao.id,
-      'capital_social_id': capitalSocial.id,
-      'duracao_exercicio_id': duracaoExercicio.id,
-    };
-  }
-
-  factory ContratoSocial.fromMap(
-    Map<String, dynamic> map,
-    Empresa empresa,
-    List<Socio> socios,
-    Administracao administracao,
-    CapitalSocial capitalSocial,
-    DuracaoExercicioSocial duracaoExercicio,
-    List<Clausulas> clausulas,
-  ) {
-    return ContratoSocial(
-      id: map['id'],
-      dataUpload: DateTime.parse(map['data_upload']),
-      dataProcessamento: DateTime.parse(map['data_processamento']),
-      empresa: empresa,
-      socios: socios,
-      administracao: administracao,
-      capitalSocial: capitalSocial,
-      duracaoExercicio: duracaoExercicio,
-      clausulas: clausulas,
-    );
-  }
 }

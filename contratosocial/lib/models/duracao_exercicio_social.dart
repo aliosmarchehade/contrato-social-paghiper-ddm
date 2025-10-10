@@ -1,31 +1,16 @@
-class DuracaoExercicioSocial {
-  int? id;
-  String periodo;
-  DateTime dataInicio;
-  DateTime dataFim;
+import 'package:contratosocial/models/dto.dart';
 
-  DuracaoExercicioSocial({
+class DTODuracaoExercicioSocial implements DTO {
+  @override
+  final int? id;
+  final String periodo;
+  final DateTime dataInicio;
+  final DateTime dataFim;
+
+  DTODuracaoExercicioSocial({
     this.id,
     required this.periodo,
     required this.dataInicio,
     required this.dataFim,
   });
-
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'periodo': periodo,
-      'data_inicio': dataInicio.toIso8601String(),
-      'data_fim': dataFim.toIso8601String(),
-    };
-  }
-
-  factory DuracaoExercicioSocial.fromMap(Map<String, dynamic> map) {
-    return DuracaoExercicioSocial(
-      id: map['id'],
-      periodo: map['periodo'],
-      dataInicio: DateTime.parse(map['data_inicio']),
-      dataFim: DateTime.parse(map['data_fim']),
-    );
-  }
 }
