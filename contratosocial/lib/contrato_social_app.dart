@@ -40,7 +40,13 @@ class ContratoSocialApp extends StatelessWidget {
   final usuario = args as Usuario;
   return Dashboard(usuario: usuario);
 },
-        //Rotas.menuPrincipal: (context) => const MenuPrincipal(usuario: usuario),
+
+  // Rotas.dashboard: (context) {
+  //     final usuario = ModalRoute.of(context)!.settings.arguments as Usuario;
+  //     return Dashboard(usuario: usuario);
+  //   },
+ //antes estava assim, só que nao tem uma condicional para caso o usuário nao esteja sendo persistido
+       
       },
     );
   }

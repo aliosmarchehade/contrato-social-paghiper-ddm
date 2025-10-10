@@ -32,11 +32,7 @@ class _LoginPageState extends State<PaginaLogin> {
         Rotas.dashboard,
         arguments: usuario,
 );
-        // Navigator.pushReplacementNamed(
-        //   context,
-        //   Rotas.dashboard,
-        //   arguments: usuario,
-        // );
+       
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Usuário ou senha inválidos!")),

@@ -9,6 +9,7 @@ class Dashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     // Mock de dados (poderia vir de DAO/Provider)
     int contratosAnalisados = 12;
     int sociosCadastrados = 35;
