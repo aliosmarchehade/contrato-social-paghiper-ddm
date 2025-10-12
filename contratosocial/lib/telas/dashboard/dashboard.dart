@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:contratosocial/configuracao/rotas.dart';
 
 class Dashboard extends StatelessWidget {
-  final Usuario usuario;
 
-  const Dashboard({super.key, required this.usuario});
+  // final Usuario usuario;
+
+  // const Dashboard({super.key, required this.usuario});
+  const Dashboard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -51,14 +53,26 @@ class Dashboard extends StatelessWidget {
                   end: Alignment.bottomRight,
                 ),
               ),
+              // accountName: Text(
+              //   usuario.nome,
+              //   style: const TextStyle(
+              //     fontWeight: FontWeight.bold,
+              //     fontSize: 18,
+              //   ),
+              // ),
+              // accountEmail: Text(usuario.email),
+              // currentAccountPicture: const CircleAvatar(
+              //   backgroundColor: Colors.white,
+              //   child: Icon(Icons.person, size: 40, color: Color(0xFF0860DB)),
+              // ),
               accountName: Text(
-                usuario.nome,
+                "Danizoca",
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                 ),
               ),
-              accountEmail: Text(usuario.email),
+              accountEmail: Text("danizoca@gmail.com"),
               currentAccountPicture: const CircleAvatar(
                 backgroundColor: Colors.white,
                 child: Icon(Icons.person, size: 40, color: Color(0xFF0860DB)),
@@ -68,6 +82,22 @@ class Dashboard extends StatelessWidget {
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
+                  ListTile(
+                    leading: const Icon(
+                      Icons.home,
+                      color: Color(0xFF0860DB),
+                    ),
+                    title: const Text(
+                      "Dashboard",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.of(context).pushNamed(Rotas.dashboard);
+                    },
+                  ),
                   ListTile(
                     leading: const Icon(
                       Icons.description,
