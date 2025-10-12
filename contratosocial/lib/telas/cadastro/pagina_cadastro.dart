@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models/usuario.dart';
-import '../banco/database_helper_segundo_plano.dart';
+import '../../models/usuario.dart';
+import '../../banco/database_helper_segundo_plano.dart';
 
 class PaginaCadastro extends StatefulWidget {
   const PaginaCadastro({super.key});

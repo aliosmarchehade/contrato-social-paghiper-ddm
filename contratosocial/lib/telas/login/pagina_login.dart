@@ -1,9 +1,9 @@
 import 'package:contratosocial/telas/lerContrato/ler_contrato.dart';
 import 'package:contratosocial/telas/dashboard/dashboard.dart';
 import 'package:flutter/material.dart';
-import 'pagina_cadastro.dart';
-import '../models/usuario.dart';
-import '../banco/database_helper_segundo_plano.dart';
+import '../cadastro/pagina_cadastro.dart';
+import '../../models/usuario.dart';
+import '../../banco/database_helper_segundo_plano.dart';
 import 'package:contratosocial/configuracao/rotas.dart';
 
 class PaginaLogin extends StatefulWidget {
@@ -26,13 +26,11 @@ class _LoginPageState extends State<PaginaLogin> {
       final usuario = await DatabaseHelper().autenticarUsuario(nome, senha);
 
       if (usuario != null) {
-        
         Navigator.pushReplacementNamed(
-        context,
-        Rotas.dashboard,
-        arguments: usuario,
-);
-       
+          context,
+          Rotas.dashboard,
+          arguments: usuario,
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Usuário ou senha inválidos!")),
