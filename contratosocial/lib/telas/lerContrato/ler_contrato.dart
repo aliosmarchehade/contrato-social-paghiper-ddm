@@ -20,6 +20,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:contratosocial/mock/mock_data.dart';
+import 'package:contratosocial/components/app_drawer.dart';
 
 class LerContrato extends StatefulWidget {
   const LerContrato({super.key});
@@ -175,6 +176,7 @@ class _LerContratoState extends State<LerContrato> {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
         ),
       ),
+      drawer: const AppDrawer(),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
