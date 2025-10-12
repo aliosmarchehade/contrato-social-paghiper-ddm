@@ -1,319 +1,25 @@
-// import 'dart:typed_data';
-// import 'package:contratosocial/models/usuario.dart';
-// import 'package:flutter/material.dart';
-// import 'package:file_picker/file_picker.dart';
-// import 'package:contratosocial/mock/mock_contrato.dart';
-// import 'package:contratosocial/banco/contrato_social_dao_segundo_plano.dart';
-
-// class LerContrato extends StatefulWidget {
-//   const LerContrato({super.key});
-
-//   @override
-//   State<LerContrato> createState() => _LerContratoState();
-// }
-
-// class _LerContratoState extends State<LerContrato> {
-//   String? _fileName;
-//   Uint8List? _fileBytes;
-
-//   Future<void> _pickFile() async {
-//     try {
-//       final result = await FilePicker.platform.pickFiles(
-//         type: FileType.custom,
-//         allowedExtensions: ['pdf'],
-//         withData: true,
-//       );
-
-//       if (result != null && result.files.isNotEmpty) {
-//         setState(() {
-//           _fileName = result.files.single.name;
-//           _fileBytes = result.files.single.bytes;
-//         });
-
-//         ScaffoldMessenger.of(context).showSnackBar(
-//           SnackBar(content: Text("Arquivo selecionado: $_fileName")),
-//         );
-
-//         _showContractDialog(mockContrato);
-//       } else {
-//         ScaffoldMessenger.of(context).showSnackBar(
-//           const SnackBar(content: Text("Nenhum arquivo selecionado.")),
-//         );
-//       }
-//     } catch (e) {
-//       ScaffoldMessenger.of(
-//         context,
-//       ).showSnackBar(SnackBar(content: Text("Erro ao selecionar arquivo: $e")));
-//     }
-//   }
-
-//   void _showContractDialog(Map<String, dynamic> contractData) {
-//     showDialog(
-//       context: context,
-//       builder:
-//           (context) => Dialog(
-//             shape: RoundedRectangleBorder(
-//               borderRadius: BorderRadius.circular(16),
-//             ),
-//             insetPadding: const EdgeInsets.all(16),
-//             child: Container(
-//               color: Colors.white,
-//               padding: const EdgeInsets.all(20),
-//               constraints: const BoxConstraints(maxHeight: 600),
-//               child: SingleChildScrollView(
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: [
-//                     const Text(
-//                       "Detalhes do Contrato Social",
-//                       style: TextStyle(
-//                         fontSize: 18,
-//                         fontWeight: FontWeight.bold,
-//                         color: Colors.black,
-//                       ),
-//                     ),
-//                     const Divider(),
-//                     // Empresa
-//                     const Text(
-//                       "Empresa",
-//                       style: TextStyle(fontWeight: FontWeight.bold),
-//                     ),
-//                     Text(
-//                       "Nome: ${contractData['empresa']['nome_empresarial']}",
-//                     ),
-//                     Text("CNPJ: ${contractData['empresa']['cnpj']}"),
-//                     Text(
-//                       "Endereço: ${contractData['empresa']['endereco']['logradouro']}, "
-//                       "${contractData['empresa']['endereco']['numero']} - "
-//                       "${contractData['empresa']['endereco']['cidade']}/"
-//                       "${contractData['empresa']['endereco']['estado']}",
-//                     ),
-//                     const SizedBox(height: 12),
-
-//                     // Sócios
-//                     const Text(
-//                       "Sócios",
-//                       style: TextStyle(fontWeight: FontWeight.bold),
-//                     ),
-//                     ...contractData['socios'].map<Widget>(
-//                       (socio) => Padding(
-//                         padding: const EdgeInsets.only(bottom: 6),
-//                         child: Column(
-//                           crossAxisAlignment: CrossAxisAlignment.start,
-//                           children: [
-//                             Text("Nome: ${socio['nome']}"),
-//                             Text("Documento: ${socio['documento']}"),
-//                             Text("Percentual: ${socio['percentual'] ?? '-'}"),
-//                           ],
-//                         ),
-//                       ),
-//                     ),
-//                     const SizedBox(height: 12),
-
-//                     // Cláusulas
-//                     const Text(
-//                       "Cláusulas",
-//                       style: TextStyle(fontWeight: FontWeight.bold),
-//                     ),
-//                     ...contractData['clausulas'].map<Widget>(
-//                       (c) => Padding(
-//                         padding: const EdgeInsets.only(bottom: 8),
-//                         child: Column(
-//                           crossAxisAlignment: CrossAxisAlignment.start,
-//                           children: [
-//                             Text(
-//                               "• ${c['tipo']}",
-//                               style: const TextStyle(
-//                                 fontWeight: FontWeight.w600,
-//                               ),
-//                             ),
-//                             Text(
-//                               c['descricao'],
-//                               style: const TextStyle(color: Colors.black87),
-//                             ),
-//                           ],
-//                         ),
-//                       ),
-//                     ),
-//                     const SizedBox(height: 16),
-//                     Row(
-//                       mainAxisAlignment: MainAxisAlignment.end,
-//                       children: [
-//                         ElevatedButton(
-//                           style: ElevatedButton.styleFrom(
-//                             backgroundColor: Colors.green, // Cor para salvar
-//                             shape: RoundedRectangleBorder(
-//                               borderRadius: BorderRadius.circular(12),
-//                             ),
-//                           ),
-//                           onPressed: () async {
-//                             try {
-//                               await ContratoSocialDao().saveContrato(
-//                                 contractData,
-//                               );
-//                               ScaffoldMessenger.of(context).showSnackBar(
-//                                 const SnackBar(
-//                                   content: Text("Contrato salvo com sucesso!"),
-//                                 ),
-//                               );
-//                               Navigator.pop(context); // Fecha dialog
-//                             } catch (e) {
-//                               ScaffoldMessenger.of(context).showSnackBar(
-//                                 SnackBar(content: Text("Erro ao salvar: $e")),
-//                               );
-//                             }
-//                           },
-//                           child: const Text(
-//                             "Salvar",
-//                             style: TextStyle(color: Colors.white),
-//                           ),
-//                         ),
-//                         const SizedBox(width: 8),
-//                         ElevatedButton(
-//                           style: ElevatedButton.styleFrom(
-//                             backgroundColor: Colors.blueAccent,
-//                             shape: RoundedRectangleBorder(
-//                               borderRadius: BorderRadius.circular(12),
-//                             ),
-//                           ),
-//                           onPressed: () => Navigator.pop(context),
-//                           child: const Text(
-//                             "Fechar",
-//                             style: TextStyle(color: Colors.white),
-//                           ),
-//                         ),
-//                       ],
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ),
-//           ),
-//     );
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: Colors.white,
-//       appBar: AppBar(
-//         iconTheme: const IconThemeData(color: Colors.white),
-//         title: const Text(
-//           "Ler Contrato Social",
-//           style: TextStyle(color: Colors.white),
-//         ),
-//         elevation: 10,
-//         shadowColor: Colors.black,
-//         backgroundColor: Color(0xFF0860DB),
-//       ),
-//       body: Center(
-//         child: SingleChildScrollView(
-//           padding: const EdgeInsets.all(24.0),
-//           child: Column(
-//             mainAxisAlignment: MainAxisAlignment.center,
-//             children: [
-//               Card(
-//                 color: Colors.white,
-//                 shape: RoundedRectangleBorder(
-//                   borderRadius: BorderRadius.circular(16),
-//                 ),
-//                 elevation: 6,
-//                 child: Padding(
-//                   padding: const EdgeInsets.all(24.0),
-//                   child: Column(
-//                     children: [
-//                       const Icon(
-//                         Icons.description,
-//                         size: 60,
-//                         color: Color(0xFF0860DB),
-//                       ),
-//                       const SizedBox(height: 16),
-//                       const Text(
-//                         "Enviar Contrato Social (PDF)",
-//                         style: TextStyle(
-//                           fontSize: 18,
-//                           fontWeight: FontWeight.bold,
-//                         ),
-//                       ),
-//                       const SizedBox(height: 16),
-//                       ElevatedButton.icon(
-//                         style: ElevatedButton.styleFrom(
-//                           backgroundColor: Color(0xFF0860DB),
-//                           padding: const EdgeInsets.symmetric(
-//                             horizontal: 24,
-//                             vertical: 14,
-//                           ),
-//                           shape: RoundedRectangleBorder(
-//                             borderRadius: BorderRadius.circular(12),
-//                           ),
-//                         ),
-//                         onPressed: _pickFile,
-//                         icon: const Icon(
-//                           Icons.upload_file,
-//                           color: Colors.white,
-//                         ),
-//                         label: const Text(
-//                           "Selecionar Arquivo",
-//                           style: TextStyle(color: Colors.white),
-//                         ),
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               ),
-//               // const SizedBox(height: 24),
-//               // if (_fileName != null)
-//               //   Card(
-//               //     color: Colors.white,
-//               //     shape: RoundedRectangleBorder(
-//               //       borderRadius: BorderRadius.circular(12),
-//               //     ),
-//               //     elevation: 3,
-//               //     child: Padding(
-//               //       padding: const EdgeInsets.all(16),
-//               //       child: Column(
-//               //         crossAxisAlignment: CrossAxisAlignment.start,
-//               //         children: [
-//               //           const Text(
-//               //             "Arquivo Selecionado",
-//               //             style: TextStyle(
-//               //               fontWeight: FontWeight.bold,
-//               //               color: Colors.blueAccent,
-//               //             ),
-//               //           ),
-//               //           const SizedBox(height: 8),
-//               //           Text(_fileName!),
-//               //           Text(
-//               //             _fileBytes != null
-//               //                 ? "Arquivo carregado com ${_fileBytes!.length} bytes."
-//               //                 : "Falha ao ler conteúdo.",
-//               //             style: const TextStyle(color: Colors.grey),
-//               //           ),
-//               //         ],
-//               //       ),
-//               //     ),
-//               //   ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-
-import 'dart:typed_data';
-import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:contratosocial/mock/mock_contrato.dart';
-import 'package:contratosocial/banco/sqlite/dao/endereco_dao.dart';
-import 'package:contratosocial/banco/sqlite/dao/empresa_dao.dart';
-import 'package:contratosocial/banco/sqlite/dao/capital_social_dao.dart';
+import 'package:contratosocial/banco/sqlite/conexao_sqlite.dart';
 import 'package:contratosocial/banco/sqlite/dao/administracao_dao.dart';
-import 'package:contratosocial/banco/sqlite/dao/duracao_exercicio_social_dao.dart';
-import 'package:contratosocial/banco/sqlite/dao/socio_dao.dart';
+import 'package:contratosocial/banco/sqlite/dao/capital_social_dao.dart';
 import 'package:contratosocial/banco/sqlite/dao/clausulas_dao.dart';
 import 'package:contratosocial/banco/sqlite/dao/contrato_social_dao.dart';
+import 'package:contratosocial/banco/sqlite/dao/duracao_exercicio_social_dao.dart';
+import 'package:contratosocial/banco/sqlite/dao/empresa_dao.dart';
+import 'package:contratosocial/banco/sqlite/dao/endereco_dao.dart';
+import 'package:contratosocial/banco/sqlite/dao/socio_dao.dart';
+import 'package:contratosocial/configuracao/rotas.dart';
+import 'package:contratosocial/models/administracao.dart';
+import 'package:contratosocial/models/capital_social.dart';
+import 'package:contratosocial/models/clausulas.dart';
+import 'package:contratosocial/models/contrato_social.dart';
+import 'package:contratosocial/models/duracao_exercicio_social.dart';
+import 'package:contratosocial/models/empresa.dart';
+import 'package:contratosocial/models/endereco.dart';
+import 'package:contratosocial/models/socio.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:contratosocial/mock/mock_data.dart';
 
 class LerContrato extends StatefulWidget {
   const LerContrato({super.key});
@@ -324,7 +30,6 @@ class LerContrato extends StatefulWidget {
 
 class _LerContratoState extends State<LerContrato> {
   String? _fileName;
-  Uint8List? _fileBytes;
 
   Future<void> _pickFile() async {
     try {
@@ -337,93 +42,138 @@ class _LerContratoState extends State<LerContrato> {
       if (result != null && result.files.isNotEmpty) {
         setState(() {
           _fileName = result.files.single.name;
-          _fileBytes = result.files.single.bytes;
         });
 
+        await _inserirMockNoBanco();
+
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Arquivo selecionado: $_fileName")),
+          const SnackBar(content: Text("Mock cadastrado com sucesso!")),
         );
 
-        // Aqui chamamos diretamente a função de inserir o mock no banco
-        await _saveMockToDatabase();
+        Navigator.of(context).pushNamed(Rotas.listarContratosSalvos);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Nenhum arquivo selecionado.")),
         );
       }
     } catch (e) {
+      print('Erro ao selecionar arquivo: $e');
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text("Erro ao selecionar arquivo: $e")));
     }
   }
 
-Future<void> _saveMockToDatabase() async {
-  try {
-    // Endereços
-    for (var endereco in mockEnderecos) {
-      await DAOEndereco().salvar(endereco);
-    }
+  Future<void> _inserirMockNoBanco() async {
+    final db = await ConexaoSQLite.database;
+    await db.transaction((txn) async {
+      try {
+        // Save Endereço
+        final enderecoId = await DAOEndereco().salvar(
+          MockData.mockEndereco,
+          db: txn,
+        );
 
-    // Empresas
-    for (var empresa in mockEmpresas) {
-      await DAOEmpresa().salvar(empresa);
-    }
+        // Save Empresa with updated enderecoId
+        final empresa = DTOEmpresa(
+          nomeEmpresarial: MockData.mockEmpresa.nomeEmpresarial,
+          cnpj: MockData.mockEmpresa.cnpj,
+          enderecoId: enderecoId,
+          objetoSocial: MockData.mockEmpresa.objetoSocial,
+          duracaoSociedade: MockData.mockEmpresa.duracaoSociedade,
+        );
+        final empresaId = await DAOEmpresa().salvar(empresa, db: txn);
 
-    // Capital Social
-    for (var capital in mockCapitalSocial) {
-      await DAOCapitalSocial().salvar(capital);
-    }
+        // Save Administração
+        final administracaoId = await DAOAdministracao().salvar(
+          MockData.mockAdministracao,
+          db: txn,
+        );
 
-    // Administração
-    for (var adm in mockAdministracao) {
-      await DAOAdministracao().salvar(adm);
-    }
+        // Save Capital Social
+        final capitalId = await DAOCapitalSocial().salvar(
+          MockData.mockCapital,
+          db: txn,
+        );
 
-    // Duração Exercício Social
-    for (var duracao in mockDuracaoExercicio) {
-      await DAODuracaoExercicioSocial().salvar(duracao);
-    }
+        // Save Duração Exercício
+        final duracaoId = await DAODuracaoExercicioSocial().salvar(
+          MockData.mockDuracao,
+          db: txn,
+        );
 
-    // Contrato Social
-    for (var contrato in mockContratoSocial) {
-      await DAOContratoSocial().salvar(contrato);
-    }
+        final contrato = DTOContratoSocial(
+          dataUpload: MockData.mockContrato.dataUpload,
+          dataProcessamento: MockData.mockContrato.dataProcessamento,
+          empresaId: empresaId,
+          administracaoId: administracaoId,
+          capitalSocialId: capitalId,
+          duracaoExercicioId: duracaoId,
+        );
+        final contratoId = await DAOContratoSocial().salvar(contrato, db: txn);
 
-    // Sócios
-    for (var socio in mockSocios) {
-      await DAOSocio().salvar(socio);
-    }
+        for (var socio in MockData.mockSocios) {
+          final newSocio = DTOSocio(
+            nome: socio.nome,
+            documento: socio.documento,
+            enderecoId: enderecoId,
+            profissao: socio.profissao,
+            percentual: socio.percentual,
+            tipo: socio.tipo,
+            nacionalidade: socio.nacionalidade,
+            estadoCivil: socio.estadoCivil,
+            contratoSocialId: contratoId,
+          );
+          final socioId = await DAOSocio().salvar(newSocio, db: txn);
+        }
 
-    // Cláusulas
-    for (var clausula in mockClausulas) {
-      await DAOClausulas().salvar(clausula);
-    }
+        for (var clausula in MockData.mockClausulas) {
+          final newClausula = DTOClausulas(
+            titulo: clausula.titulo,
+            descricao: clausula.descricao,
+            contratoSocialId: contratoId,
+          );
+          final clausulaId = await DAOClausulas().salvar(newClausula, db: txn);
+        }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Mock inserido no banco com sucesso!")),
-    );
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Erro ao inserir mock no banco: $e")),
-    );
+        final resultado = await txn.query('contrato_social');
+      } catch (e) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Erro ao inserir mock: $e")));
+        rethrow; // Propaga o erro para a transação falhar
+      }
+    });
+
+    // await _verificarDados();
   }
-}
 
+  // Future<void> _verificarDados() async {
+  //   final db = await ConexaoSQLite.database;
+  //   final tabelas = await db.rawQuery(
+  //     "SELECT name FROM sqlite_master WHERE type='table'",
+  //   );
+  //   print('Tabelas no banco: $tabelas');
+  //   final contratos = await db.query('contrato_social');
+  //   print('Dados em contrato_social após transação: $contratos');
+  //   final empresas = await db.query('empresa');
+  //   print('Dados em empresa: $empresas');
+  //   final socios = await db.query('socio');
+  //   print('Dados em socio: $socios');
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF8F9FC),
       appBar: AppBar(
+        backgroundColor: Color(0xFF0860DB),
+        elevation: 2,
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
           "Ler Contrato Social",
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
         ),
-        elevation: 10,
-        shadowColor: Colors.black,
-        backgroundColor: const Color(0xFF0860DB),
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -434,37 +184,55 @@ Future<void> _saveMockToDatabase() async {
               Card(
                 color: Colors.white,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(24),
                 ),
-                elevation: 6,
+                elevation: 4,
+                shadowColor: Colors.black12,
                 child: Padding(
-                  padding: const EdgeInsets.all(24.0),
+                  padding: const EdgeInsets.all(28.0),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Icon(
-                        Icons.description,
-                        size: 60,
-                        color: Color(0xFF0860DB),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFE8F0FE),
+                          shape: BoxShape.circle,
+                        ),
+                        padding: const EdgeInsets.all(20),
+                        child: const Icon(
+                          Icons.description_outlined,
+                          size: 56,
+                          color: Color(0xFF0860DB),
+                        ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 20),
                       const Text(
                         "Enviar Contrato Social (PDF)",
                         style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF1A1A1A),
                         ),
+                        textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 16),
-                      ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
+                      const Text(
+                        "Selecione o arquivo PDF do contrato social para continuar o processo.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 14, color: Colors.black54),
+                      ),
+                      const SizedBox(height: 24),
+                      FilledButton.icon(
+                        style: FilledButton.styleFrom(
                           backgroundColor: const Color(0xFF0860DB),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 24,
                             vertical: 14,
                           ),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(16),
                           ),
+                          elevation: 2,
                         ),
                         onPressed: _pickFile,
                         icon: const Icon(
@@ -473,9 +241,47 @@ Future<void> _saveMockToDatabase() async {
                         ),
                         label: const Text(
                           "Selecionar Arquivo",
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.5,
+                          ),
                         ),
                       ),
+                      if (_fileName != null) ...[
+                        const SizedBox(height: 20),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 10,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF2F6FC),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.picture_as_pdf,
+                                color: Color(0xFF0860DB),
+                              ),
+                              const SizedBox(width: 8),
+                              Flexible(
+                                child: Text(
+                                  _fileName!,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: Color(0xFF1A1A1A),
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),

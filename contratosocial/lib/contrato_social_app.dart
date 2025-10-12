@@ -25,28 +25,27 @@ class ContratoSocialApp extends StatelessWidget {
         Rotas.login: (context) => const PaginaLogin(),
         //Rotas.filtrarContrato: (context) => const FiltroContrato(),
         Rotas.lerContrato: (context) => const LerContrato(),
-        //Rotas.listarContratosSalvos: (context) => const ListarSalvos(),
+        Rotas.listarContratosSalvos: (context) => const ListarSalvos(),
 
         Rotas.dashboard: (context) {
-        final args = ModalRoute.of(context)!.settings.arguments;
-        if (args == null) {
-        // Se não veio nada, redireciona para login
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.pushReplacementNamed(context, Rotas.login);
-      });
-      return const SizedBox.shrink(); // retorna algo temporário
-  }
+          final args = ModalRoute.of(context)!.settings.arguments;
+          if (args == null) {
+            // Se não veio nada, redireciona para login
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              Navigator.pushReplacementNamed(context, Rotas.login);
+            });
+            return const SizedBox.shrink(); // retorna algo temporário
+          }
 
-  final usuario = args as Usuario;
-  return Dashboard(usuario: usuario);
-},
+          final usuario = args as Usuario;
+          return Dashboard(usuario: usuario);
+        },
 
-  // Rotas.dashboard: (context) {
-  //     final usuario = ModalRoute.of(context)!.settings.arguments as Usuario;
-  //     return Dashboard(usuario: usuario);
-  //   },
- //antes estava assim, só que nao tem uma condicional para caso o usuário nao esteja sendo persistido
-       
+        // Rotas.dashboard: (context) {
+        //     final usuario = ModalRoute.of(context)!.settings.arguments as Usuario;
+        //     return Dashboard(usuario: usuario);
+        //   },
+        //antes estava assim, só que nao tem uma condicional para caso o usuário nao esteja sendo persistido
       },
     );
   }

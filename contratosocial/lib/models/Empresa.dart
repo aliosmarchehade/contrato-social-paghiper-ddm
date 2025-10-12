@@ -8,7 +8,6 @@ class DTOEmpresa implements DTO {
   final int enderecoId; // FK para a tabela endereco
   final String objetoSocial;
   final String duracaoSociedade;
-
   DTOEmpresa({
     this.id,
     required this.nomeEmpresarial,
@@ -17,4 +16,21 @@ class DTOEmpresa implements DTO {
     required this.objetoSocial,
     required this.duracaoSociedade,
   });
+  DTOEmpresa copyWith({
+    int? id,
+    String? nomeEmpresarial,
+    String? cnpj,
+    int? enderecoId,
+    String? objetoSocial,
+    String? duracaoSociedade,
+  }) {
+    return DTOEmpresa(
+      id: id ?? this.id,
+      nomeEmpresarial: nomeEmpresarial ?? this.nomeEmpresarial,
+      cnpj: cnpj ?? this.cnpj,
+      enderecoId: enderecoId ?? this.enderecoId,
+      objetoSocial: objetoSocial ?? this.objetoSocial,
+      duracaoSociedade: duracaoSociedade ?? this.duracaoSociedade,
+    );
+  }
 }

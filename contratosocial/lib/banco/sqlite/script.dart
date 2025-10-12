@@ -16,7 +16,7 @@ class ScriptSQLite {
       CREATE TABLE empresa (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         nome_empresarial TEXT NOT NULL,
-        cnpj TEXT NOT NULL UNIQUE,
+        cnpj TEXT NOT NULL,
         endereco_id INTEGER NOT NULL,
         objeto_social TEXT NOT NULL,
         duracao_sociedade TEXT NOT NULL,
@@ -49,7 +49,7 @@ class ScriptSQLite {
     '''
       CREATE TABLE clausulas (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        tipo TEXT NOT NULL,
+        titulo TEXT NOT NULL,
         descricao TEXT NOT NULL,
         contrato_social_id INTEGER NOT NULL,
         FOREIGN KEY (contrato_social_id) REFERENCES contrato_social(id)
@@ -86,7 +86,22 @@ class ScriptSQLite {
         FOREIGN KEY (duracao_exercicio_id) REFERENCES duracao_exercicio_social(id)
       )
     ''',
+    '''
+      CREATE TABLE usuarios (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT,
+        email TEXT UNIQUE,
+        senha TEXT
+      )
+    ''',
   ];
 
-  static const List<List<String>> comandosInsercoes = [];
+  static const List<List<String>> comandosInsercoes = [
+    [
+      '''
+      INSERT INTO usuarios (nome, email, senha) 
+      VALUES ('admin', 'admin@sistema.com', 'admin123')
+      ''',
+    ],
+  ];
 }

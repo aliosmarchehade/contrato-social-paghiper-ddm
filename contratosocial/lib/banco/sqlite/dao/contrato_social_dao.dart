@@ -1,11 +1,12 @@
 import 'package:contratosocial/banco/sqlite/conexao_sqlite.dart';
 import 'package:contratosocial/models/contrato_social.dart';
+import 'package:sqflite/sqflite.dart';
 
 class DAOContratoSocial {
   static const String _tabela = 'contrato_social';
 
-  Future<int> salvar(DTOContratoSocial contrato) async {
-    final db = await ConexaoSQLite.database;
+  Future<int> salvar(DTOContratoSocial contrato, {DatabaseExecutor? db}) async {
+    final database = db ?? await ConexaoSQLite.database;
 
     final dados = {
       'data_upload': contrato.dataUpload.toIso8601String(),
@@ -17,14 +18,16 @@ class DAOContratoSocial {
     };
 
     if (contrato.id != null) {
-      return await db.update(
+      print('Atualizando contrato social ID: ${contrato.id}');
+      return await database.update(
         _tabela,
         dados,
         where: 'id = ?',
         whereArgs: [contrato.id],
       );
     } else {
-      return await db.insert(_tabela, dados);
+      print('Inserindo novo contrato social: ${contrato.empresaId}');
+      return await database.insert(_tabela, dados);
     }
   }
 
@@ -36,7 +39,9 @@ class DAOContratoSocial {
       return DTOContratoSocial(
         id: linha['id'] as int?,
         dataUpload: DateTime.parse(linha['data_upload'] as String),
-        dataProcessamento: DateTime.parse(linha['data_processamento'] as String),
+        dataProcessamento: DateTime.parse(
+          linha['data_processamento'] as String,
+        ),
         empresaId: linha['empresa_id'] as int,
         administracaoId: linha['administracao_id'] as int,
         capitalSocialId: linha['capital_social_id'] as int,
@@ -47,18 +52,16 @@ class DAOContratoSocial {
 
   Future<DTOContratoSocial?> buscarPorId(int id) async {
     final db = await ConexaoSQLite.database;
-    final resultado = await db.query(
-      _tabela,
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    final resultado = await db.query(_tabela, where: 'id = ?', whereArgs: [id]);
 
     if (resultado.isNotEmpty) {
       final linha = resultado.first;
       return DTOContratoSocial(
         id: linha['id'] as int?,
         dataUpload: DateTime.parse(linha['data_upload'] as String),
-        dataProcessamento: DateTime.parse(linha['data_processamento'] as String),
+        dataProcessamento: DateTime.parse(
+          linha['data_processamento'] as String,
+        ),
         empresaId: linha['empresa_id'] as int,
         administracaoId: linha['administracao_id'] as int,
         capitalSocialId: linha['capital_social_id'] as int,

@@ -1,12 +1,13 @@
 import 'package:contratosocial/banco/sqlite/conexao_sqlite.dart';
 import 'package:contratosocial/models/endereco.dart';
+import 'package:sqflite/sqflite.dart';
 
 class DAOEndereco {
   static const String _tabela = 'endereco';
 
   /// Insere ou atualiza um endereço no banco
-  Future<int> salvar(DTOEndereco endereco) async {
-    final db = await ConexaoSQLite.database;
+  Future<int> salvar(DTOEndereco endereco, {DatabaseExecutor? db}) async {
+    final database = db ?? await ConexaoSQLite.database;
 
     final dados = {
       'logradouro': endereco.logradouro,
@@ -19,14 +20,18 @@ class DAOEndereco {
     };
 
     if (endereco.id != null) {
-      return await db.update(
+      print('Atualizando endereço ID: ${endereco.id}');
+      return await database.update(
         _tabela,
         dados,
         where: 'id = ?',
         whereArgs: [endereco.id],
       );
     } else {
-      return await db.insert(_tabela, dados);
+      print(
+        'Inserindo novo endereço: ${endereco.logradouro}, ${endereco.numero}',
+      );
+      return await database.insert(_tabela, dados);
     }
   }
 
@@ -52,11 +57,7 @@ class DAOEndereco {
   /// Busca um endereço específico pelo ID
   Future<DTOEndereco?> buscarPorId(int id) async {
     final db = await ConexaoSQLite.database;
-    final resultado = await db.query(
-      _tabela,
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    final resultado = await db.query(_tabela, where: 'id = ?', whereArgs: [id]);
 
     if (resultado.isNotEmpty) {
       final linha = resultado.first;
@@ -77,10 +78,6 @@ class DAOEndereco {
   /// Exclui um endereço do banco
   Future<int> excluir(int id) async {
     final db = await ConexaoSQLite.database;
-    return await db.delete(
-      _tabela,
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    return await db.delete(_tabela, where: 'id = ?', whereArgs: [id]);
   }
 }

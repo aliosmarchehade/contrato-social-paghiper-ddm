@@ -9,7 +9,6 @@ class DTOContratoSocial implements DTO {
   final int administracaoId;
   final int capitalSocialId;
   final int duracaoExercicioId;
-
   DTOContratoSocial({
     this.id,
     required this.dataUpload,
@@ -19,4 +18,23 @@ class DTOContratoSocial implements DTO {
     required this.capitalSocialId,
     required this.duracaoExercicioId,
   });
+  DTOContratoSocial copyWith({
+    int? id,
+    DateTime? dataUpload,
+    DateTime? dataProcessamento,
+    int? empresaId,
+    int? administracaoId,
+    int? capitalSocialId,
+    int? duracaoExercicioId,
+  }) {
+    return DTOContratoSocial(
+      id: id ?? this.id,
+      dataUpload: dataUpload ?? this.dataUpload,
+      dataProcessamento: dataProcessamento ?? this.dataProcessamento,
+      empresaId: empresaId ?? this.empresaId,
+      administracaoId: administracaoId ?? this.administracaoId,
+      capitalSocialId: capitalSocialId ?? this.capitalSocialId,
+      duracaoExercicioId: duracaoExercicioId ?? this.duracaoExercicioId,
+    );
+  }
 }

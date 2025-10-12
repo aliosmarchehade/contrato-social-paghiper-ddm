@@ -1,12 +1,13 @@
 import 'package:contratosocial/banco/sqlite/conexao_sqlite.dart';
 import 'package:contratosocial/models/empresa.dart';
+import 'package:sqflite/sqflite.dart';
 
 class DAOEmpresa {
   static const String _tabela = 'empresa';
 
   /// Insere ou atualiza uma empresa no banco
-  Future<int> salvar(DTOEmpresa empresa) async {
-    final db = await ConexaoSQLite.database;
+  Future<int> salvar(DTOEmpresa empresa, {DatabaseExecutor? db}) async {
+    final database = db ?? await ConexaoSQLite.database;
 
     final dados = {
       'nome_empresarial': empresa.nomeEmpresarial,
@@ -17,14 +18,18 @@ class DAOEmpresa {
     };
 
     if (empresa.id != null) {
-      return await db.update(
+      print(
+        'Atualizando empresa ID: ${empresa.id}, Nome: ${empresa.nomeEmpresarial}',
+      );
+      return await database.update(
         _tabela,
         dados,
         where: 'id = ?',
         whereArgs: [empresa.id],
       );
     } else {
-      return await db.insert(_tabela, dados);
+      print('Inserindo nova empresa: ${empresa.nomeEmpresarial}');
+      return await database.insert(_tabela, dados);
     }
   }
 
@@ -48,11 +53,7 @@ class DAOEmpresa {
   /// Busca uma empresa específica pelo ID
   Future<DTOEmpresa?> buscarPorId(int id) async {
     final db = await ConexaoSQLite.database;
-    final resultado = await db.query(
-      _tabela,
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    final resultado = await db.query(_tabela, where: 'id = ?', whereArgs: [id]);
 
     if (resultado.isNotEmpty) {
       final linha = resultado.first;
@@ -71,10 +72,6 @@ class DAOEmpresa {
   /// Exclui uma empresa do banco
   Future<int> excluir(int id) async {
     final db = await ConexaoSQLite.database;
-    return await db.delete(
-      _tabela,
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    return await db.delete(_tabela, where: 'id = ?', whereArgs: [id]);
   }
 }

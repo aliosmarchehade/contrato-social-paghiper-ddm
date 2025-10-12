@@ -1,12 +1,16 @@
 import 'package:contratosocial/banco/sqlite/conexao_sqlite.dart';
 import 'package:contratosocial/models/duracao_exercicio_social.dart';
+import 'package:sqflite/sqflite.dart';
 
 class DAODuracaoExercicioSocial {
   static const String _tabela = 'duracao_exercicio_social';
 
   /// Insere ou atualiza um registro de duração do exercício social
-  Future<int> salvar(DTODuracaoExercicioSocial duracao) async {
-    final db = await ConexaoSQLite.database;
+  Future<int> salvar(
+    DTODuracaoExercicioSocial duracao, {
+    DatabaseExecutor? db,
+  }) async {
+    final database = db ?? await ConexaoSQLite.database;
 
     final dados = {
       'periodo': duracao.periodo,
@@ -15,14 +19,16 @@ class DAODuracaoExercicioSocial {
     };
 
     if (duracao.id != null) {
-      return await db.update(
+      print('Atualizando duração exercício ID: ${duracao.id}');
+      return await database.update(
         _tabela,
         dados,
         where: 'id = ?',
         whereArgs: [duracao.id],
       );
     } else {
-      return await db.insert(_tabela, dados);
+      print('Inserindo nova duração exercício: ${duracao.periodo}');
+      return await database.insert(_tabela, dados);
     }
   }
 
@@ -44,11 +50,7 @@ class DAODuracaoExercicioSocial {
   /// Busca uma duração específica pelo ID
   Future<DTODuracaoExercicioSocial?> buscarPorId(int id) async {
     final db = await ConexaoSQLite.database;
-    final resultado = await db.query(
-      _tabela,
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    final resultado = await db.query(_tabela, where: 'id = ?', whereArgs: [id]);
 
     if (resultado.isNotEmpty) {
       final linha = resultado.first;
@@ -65,10 +67,6 @@ class DAODuracaoExercicioSocial {
   /// Exclui uma duração do banco
   Future<int> excluir(int id) async {
     final db = await ConexaoSQLite.database;
-    return await db.delete(
-      _tabela,
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    return await db.delete(_tabela, where: 'id = ?', whereArgs: [id]);
   }
 }

@@ -1,11 +1,12 @@
 import 'package:contratosocial/banco/sqlite/conexao_sqlite.dart';
 import 'package:contratosocial/models/capital_social.dart';
+import 'package:sqflite/sqflite.dart';
 
 class DAOCapitalSocial {
   static const String _tabela = 'capital_social';
 
-  Future<int> salvar(DTOCapitalSocial capital) async {
-    final db = await ConexaoSQLite.database;
+  Future<int> salvar(DTOCapitalSocial capital, {DatabaseExecutor? db}) async {
+    final database = db ?? await ConexaoSQLite.database;
 
     final dados = {
       'valor_total': capital.valorTotal,
@@ -14,14 +15,16 @@ class DAOCapitalSocial {
     };
 
     if (capital.id != null) {
-      return await db.update(
+      print('Atualizando capital social ID: ${capital.id}');
+      return await database.update(
         _tabela,
         dados,
         where: 'id = ?',
         whereArgs: [capital.id],
       );
     } else {
-      return await db.insert(_tabela, dados);
+      print('Inserindo novo capital social: ${capital.valorTotal}');
+      return await database.insert(_tabela, dados);
     }
   }
 

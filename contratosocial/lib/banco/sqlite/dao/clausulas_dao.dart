@@ -1,11 +1,12 @@
 import 'package:contratosocial/banco/sqlite/conexao_sqlite.dart';
 import 'package:contratosocial/models/clausulas.dart';
+import 'package:sqflite/sqflite.dart';
 
 class DAOClausulas {
   static const String _tabela = 'clausulas';
 
-  Future<int> salvar(DTOClausulas clausula) async {
-    final db = await ConexaoSQLite.database;
+  Future<int> salvar(DTOClausulas clausula, {DatabaseExecutor? db}) async {
+    final database = db ?? await ConexaoSQLite.database;
 
     final dados = {
       'titulo': clausula.titulo,
@@ -14,14 +15,18 @@ class DAOClausulas {
     };
 
     if (clausula.id != null) {
-      return await db.update(
+      print(
+        'Atualizando cláusula ID: ${clausula.id}, Título: ${clausula.titulo}',
+      );
+      return await database.update(
         _tabela,
         dados,
         where: 'id = ?',
         whereArgs: [clausula.id],
       );
     } else {
-      return await db.insert(_tabela, dados);
+      print('Inserindo nova cláusula: ${clausula.titulo}');
+      return await database.insert(_tabela, dados);
     }
   }
 

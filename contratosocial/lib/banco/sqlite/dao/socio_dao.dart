@@ -1,12 +1,13 @@
 import 'package:contratosocial/banco/sqlite/conexao_sqlite.dart';
 import 'package:contratosocial/models/socio.dart';
+import 'package:sqflite/sqflite.dart';
 
 class DAOSocio {
   static const String _tabela = 'socio';
 
   /// Salva ou atualiza um sócio
-  Future<int> salvar(DTOSocio socio) async {
-    final db = await ConexaoSQLite.database;
+  Future<int> salvar(DTOSocio socio, {DatabaseExecutor? db}) async {
+    final database = db ?? await ConexaoSQLite.database;
 
     final dados = {
       'nome': socio.nome,
@@ -21,14 +22,16 @@ class DAOSocio {
     };
 
     if (socio.id != null) {
-      return await db.update(
+      print('Atualizando sócio ID: ${socio.id}, Nome: ${socio.nome}');
+      return await database.update(
         _tabela,
         dados,
         where: 'id = ?',
         whereArgs: [socio.id],
       );
     } else {
-      return await db.insert(_tabela, dados);
+      print('Inserindo novo sócio: ${socio.nome}');
+      return await database.insert(_tabela, dados);
     }
   }
 
@@ -56,11 +59,7 @@ class DAOSocio {
   /// Busca um sócio pelo ID
   Future<DTOSocio?> buscarPorId(int id) async {
     final db = await ConexaoSQLite.database;
-    final resultado = await db.query(
-      _tabela,
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    final resultado = await db.query(_tabela, where: 'id = ?', whereArgs: [id]);
 
     if (resultado.isNotEmpty) {
       final linha = resultado.first;
@@ -83,11 +82,7 @@ class DAOSocio {
   /// Exclui um sócio
   Future<int> excluir(int id) async {
     final db = await ConexaoSQLite.database;
-    return await db.delete(
-      _tabela,
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    return await db.delete(_tabela, where: 'id = ?', whereArgs: [id]);
   }
 
   /// Busca todos os sócios de um contrato específico

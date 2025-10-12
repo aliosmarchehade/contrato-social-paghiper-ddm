@@ -12,7 +12,6 @@ class DTOSocio implements DTO {
   final String nacionalidade;
   final String estadoCivil;
   final int? contratoSocialId; // FK opcional
-
   DTOSocio({
     this.id,
     required this.nome,
@@ -25,4 +24,29 @@ class DTOSocio implements DTO {
     required this.estadoCivil,
     this.contratoSocialId,
   });
+  DTOSocio copyWith({
+    int? id,
+    String? nome,
+    String? documento,
+    int? enderecoId,
+    String? profissao,
+    double? percentual,
+    String? tipo,
+    String? nacionalidade,
+    String? estadoCivil,
+    int? contratoSocialId,
+  }) {
+    return DTOSocio(
+      id: id ?? this.id,
+      nome: nome ?? this.nome,
+      documento: documento ?? this.documento,
+      enderecoId: enderecoId ?? this.enderecoId,
+      profissao: profissao ?? this.profissao,
+      percentual: percentual ?? this.percentual,
+      tipo: tipo ?? this.tipo,
+      nacionalidade: nacionalidade ?? this.nacionalidade,
+      estadoCivil: estadoCivil ?? this.estadoCivil,
+      contratoSocialId: contratoSocialId ?? this.contratoSocialId,
+    );
+  }
 }
