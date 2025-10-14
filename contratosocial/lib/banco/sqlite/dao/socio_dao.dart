@@ -22,7 +22,6 @@ class DAOSocio {
     };
 
     if (socio.id != null) {
-      print('Atualizando sócio ID: ${socio.id}, Nome: ${socio.nome}');
       return await database.update(
         _tabela,
         dados,
@@ -30,7 +29,6 @@ class DAOSocio {
         whereArgs: [socio.id],
       );
     } else {
-      print('Inserindo novo sócio: ${socio.nome}');
       return await database.insert(_tabela, dados);
     }
   }

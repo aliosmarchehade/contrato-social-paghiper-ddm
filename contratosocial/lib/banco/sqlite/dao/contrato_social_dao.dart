@@ -18,7 +18,6 @@ class DAOContratoSocial {
     };
 
     if (contrato.id != null) {
-      print('Atualizando contrato social ID: ${contrato.id}');
       return await database.update(
         _tabela,
         dados,
@@ -26,7 +25,6 @@ class DAOContratoSocial {
         whereArgs: [contrato.id],
       );
     } else {
-      print('Inserindo novo contrato social: ${contrato.empresaId}');
       return await database.insert(_tabela, dados);
     }
   }

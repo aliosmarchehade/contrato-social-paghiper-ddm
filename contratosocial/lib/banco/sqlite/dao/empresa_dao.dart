@@ -18,9 +18,6 @@ class DAOEmpresa {
     };
 
     if (empresa.id != null) {
-      print(
-        'Atualizando empresa ID: ${empresa.id}, Nome: ${empresa.nomeEmpresarial}',
-      );
       return await database.update(
         _tabela,
         dados,
@@ -28,7 +25,6 @@ class DAOEmpresa {
         whereArgs: [empresa.id],
       );
     } else {
-      print('Inserindo nova empresa: ${empresa.nomeEmpresarial}');
       return await database.insert(_tabela, dados);
     }
   }

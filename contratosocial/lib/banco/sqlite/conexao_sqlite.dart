@@ -35,7 +35,6 @@ class ConexaoSQLite {
       final databasesPath = await databaseFactory.getDatabasesPath();
       path = join(databasesPath, 'contrato_social.db');
     }
-    print('Caminho do banco: $path');
 
     return await databaseFactory.openDatabase(
       path,
@@ -45,7 +44,6 @@ class ConexaoSQLite {
         onUpgrade: _atualizarBanco,
         onOpen: (db) async {
           await db.execute('PRAGMA foreign_keys = ON;');
-          print('Chaves estrangeiras habilitadas');
         },
       ),
     );
@@ -54,13 +52,11 @@ class ConexaoSQLite {
   /// Criação inicial das tabelas com base no script
   static Future<void> _criarTabelas(Database db, int version) async {
     for (final comando in ScriptSQLite.comandosCriarTabelas) {
-      print('Executando comando de criação: $comando');
       await db.execute(comando);
     }
 
     for (final insercoes in ScriptSQLite.comandosInsercoes) {
       for (final comando in insercoes) {
-        print('Executando inserção inicial: $comando');
         await db.execute(comando);
       }
     }
@@ -68,7 +64,6 @@ class ConexaoSQLite {
     final tabelas = await db.rawQuery(
       "SELECT name FROM sqlite_master WHERE type='table'",
     );
-    print('Tabelas encontradas: $tabelas');
   }
 
   /// Atualizações futuras de versão do banco

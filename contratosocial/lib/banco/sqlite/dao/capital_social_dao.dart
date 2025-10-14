@@ -15,7 +15,6 @@ class DAOCapitalSocial {
     };
 
     if (capital.id != null) {
-      print('Atualizando capital social ID: ${capital.id}');
       return await database.update(
         _tabela,
         dados,
@@ -23,7 +22,6 @@ class DAOCapitalSocial {
         whereArgs: [capital.id],
       );
     } else {
-      print('Inserindo novo capital social: ${capital.valorTotal}');
       return await database.insert(_tabela, dados);
     }
   }

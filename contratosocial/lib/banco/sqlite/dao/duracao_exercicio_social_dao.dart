@@ -19,7 +19,6 @@ class DAODuracaoExercicioSocial {
     };
 
     if (duracao.id != null) {
-      print('Atualizando duração exercício ID: ${duracao.id}');
       return await database.update(
         _tabela,
         dados,
@@ -27,7 +26,6 @@ class DAODuracaoExercicioSocial {
         whereArgs: [duracao.id],
       );
     } else {
-      print('Inserindo nova duração exercício: ${duracao.periodo}');
       return await database.insert(_tabela, dados);
     }
   }

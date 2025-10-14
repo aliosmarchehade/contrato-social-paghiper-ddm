@@ -20,7 +20,6 @@ class DAOEndereco {
     };
 
     if (endereco.id != null) {
-      print('Atualizando endereço ID: ${endereco.id}');
       return await database.update(
         _tabela,
         dados,
@@ -28,9 +27,6 @@ class DAOEndereco {
         whereArgs: [endereco.id],
       );
     } else {
-      print(
-        'Inserindo novo endereço: ${endereco.logradouro}, ${endereco.numero}',
-      );
       return await database.insert(_tabela, dados);
     }
   }

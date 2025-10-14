@@ -18,7 +18,6 @@ class DAOAdministracao {
     };
 
     if (administracao.id != null) {
-      print('Atualizando administração ID: ${administracao.id}');
       return await database.update(
         _tabela,
         dados,
@@ -26,7 +25,6 @@ class DAOAdministracao {
         whereArgs: [administracao.id],
       );
     } else {
-      print('Inserindo nova administração: ${administracao.tipoAdministracao}');
       return await database.insert(_tabela, dados);
     }
   }

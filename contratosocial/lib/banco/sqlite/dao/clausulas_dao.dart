@@ -15,9 +15,6 @@ class DAOClausulas {
     };
 
     if (clausula.id != null) {
-      print(
-        'Atualizando cláusula ID: ${clausula.id}, Título: ${clausula.titulo}',
-      );
       return await database.update(
         _tabela,
         dados,
@@ -25,7 +22,6 @@ class DAOClausulas {
         whereArgs: [clausula.id],
       );
     } else {
-      print('Inserindo nova cláusula: ${clausula.titulo}');
       return await database.insert(_tabela, dados);
     }
   }

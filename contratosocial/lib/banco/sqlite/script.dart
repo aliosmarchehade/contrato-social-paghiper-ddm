@@ -20,7 +20,7 @@ class ScriptSQLite {
         endereco_id INTEGER NOT NULL,
         objeto_social TEXT NOT NULL,
         duracao_sociedade TEXT NOT NULL,
-        FOREIGN KEY (endereco_id) REFERENCES endereco(id)
+        FOREIGN KEY (endereco_id) REFERENCES endereco(id) ON DELETE CASCADE
       )
     ''',
     '''
@@ -52,7 +52,7 @@ class ScriptSQLite {
         titulo TEXT NOT NULL,
         descricao TEXT NOT NULL,
         contrato_social_id INTEGER NOT NULL,
-        FOREIGN KEY (contrato_social_id) REFERENCES contrato_social(id)
+        FOREIGN KEY (contrato_social_id) REFERENCES contrato_social(id) ON DELETE CASCADE
       )
     ''',
     '''
@@ -67,8 +67,8 @@ class ScriptSQLite {
         nacionalidade TEXT NOT NULL,
         estado_civil TEXT NOT NULL,
         contrato_social_id INTEGER NOT NULL,
-        FOREIGN KEY (endereco_id) REFERENCES endereco(id),
-        FOREIGN KEY (contrato_social_id) REFERENCES contrato_social(id)
+        FOREIGN KEY (endereco_id) REFERENCES endereco(id) ON DELETE CASCADE, 
+        FOREIGN KEY (contrato_social_id) REFERENCES contrato_social(id) ON DELETE CASCADE
       )
     ''',
     '''
@@ -81,9 +81,9 @@ class ScriptSQLite {
         capital_social_id INTEGER NOT NULL,
         duracao_exercicio_id INTEGER NOT NULL,
         FOREIGN KEY (empresa_id) REFERENCES empresa(id),
-        FOREIGN KEY (administracao_id) REFERENCES administracao(id),
-        FOREIGN KEY (capital_social_id) REFERENCES capital_social(id),
-        FOREIGN KEY (duracao_exercicio_id) REFERENCES duracao_exercicio_social(id)
+        FOREIGN KEY (administracao_id) REFERENCES administracao(id) ON DELETE CASCADE,
+        FOREIGN KEY (capital_social_id) REFERENCES capital_social(id) ON DELETE CASCADE,
+        FOREIGN KEY (duracao_exercicio_id) REFERENCES duracao_exercicio_social(id) ON DELETE CASCADE
       )
     ''',
     '''
