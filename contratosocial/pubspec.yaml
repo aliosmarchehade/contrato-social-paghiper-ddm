@@ -48,6 +48,7 @@ dependencies:
   cupertino_icons:
   google_fonts: ^6.2.1
   shared_preferences: ^2.5.3
+  pdfx: ^2.7.0
 
 
 dev_dependencies:

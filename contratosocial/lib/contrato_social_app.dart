@@ -3,7 +3,7 @@ import 'package:contratosocial/telas/listarContratos/listar_contratos_salvos.dar
 import 'package:flutter/material.dart';
 import 'package:contratosocial/configuracao/rotas.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:contratosocial/telas/pagina_login.dart';
+import 'package:contratosocial/telas/login/pagina_login.dart';
 import 'package:contratosocial/telas/lerContrato/ler_contrato.dart';
 
 class ContratoSocialApp extends StatelessWidget {

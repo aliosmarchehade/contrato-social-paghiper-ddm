@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:contratosocial/banco/sqlite/conexao_sqlite.dart';
 import 'package:contratosocial/banco/sqlite/dao/administracao_dao.dart';
 import 'package:contratosocial/banco/sqlite/dao/capital_social_dao.dart';
@@ -21,6 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:contratosocial/mock/mock_data.dart';
 import 'package:contratosocial/components/app_drawer.dart';
+import 'package:pdfx/pdfx.dart';
 
 class LerContrato extends StatefulWidget {
   const LerContrato({super.key});
@@ -31,6 +34,7 @@ class LerContrato extends StatefulWidget {
 
 class _LerContratoState extends State<LerContrato> {
   String? _fileName;
+  Uint8List? _fileBytes;
 
   Future<void> _pickFile() async {
     try {
@@ -43,6 +47,7 @@ class _LerContratoState extends State<LerContrato> {
       if (result != null && result.files.isNotEmpty) {
         setState(() {
           _fileName = result.files.single.name;
+          _fileBytes = result.files.single.bytes;
         });
 
         await _inserirMockNoBanco();
@@ -145,30 +150,33 @@ class _LerContratoState extends State<LerContrato> {
         rethrow; // Propaga o erro para a transação falhar
       }
     });
-
-    // await _verificarDados();
   }
 
-  // Future<void> _verificarDados() async {
-  //   final db = await ConexaoSQLite.database;
-  //   final tabelas = await db.rawQuery(
-  //     "SELECT name FROM sqlite_master WHERE type='table'",
-  //   );
-  //   print('Tabelas no banco: $tabelas');
-  //   final contratos = await db.query('contrato_social');
-  //   print('Dados em contrato_social após transação: $contratos');
-  //   final empresas = await db.query('empresa');
-  //   print('Dados em empresa: $empresas');
-  //   final socios = await db.query('socio');
-  //   print('Dados em socio: $socios');
-  // }
+  void _viewPdf() {
+    if (_fileBytes != null && _fileName != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder:
+              (context) =>
+                  PdfViewerScreen(fileBytes: _fileBytes!, fileName: _fileName!),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Nenhum arquivo PDF disponível para visualização."),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FC),
       appBar: AppBar(
-        backgroundColor: Color(0xFF0860DB),
+        backgroundColor: const Color(0xFF0860DB),
         elevation: 2,
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
@@ -280,6 +288,15 @@ class _LerContratoState extends State<LerContrato> {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
+                              const SizedBox(width: 8),
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.visibility,
+                                  color: Color(0xFF0860DB),
+                                ),
+                                onPressed: _viewPdf,
+                                tooltip: 'Visualizar PDF',
+                              ),
                             ],
                           ),
                         ),
@@ -291,6 +308,44 @@ class _LerContratoState extends State<LerContrato> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class PdfViewerScreen extends StatelessWidget {
+  final Uint8List fileBytes;
+  final String fileName;
+
+  const PdfViewerScreen({
+    super.key,
+    required this.fileBytes,
+    required this.fileName,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final pdfController = PdfController(
+      document: PdfDocument.openData(fileBytes),
+    );
+
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF0860DB),
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: Text(
+          fileName,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+      body: PdfView(
+        controller: pdfController,
+        scrollDirection: Axis.vertical,
+        pageSnapping: true,
+        physics: const BouncingScrollPhysics(),
       ),
     );
   }

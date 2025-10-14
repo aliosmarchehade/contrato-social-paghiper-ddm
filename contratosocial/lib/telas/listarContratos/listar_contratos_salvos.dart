@@ -27,19 +27,14 @@ class _ListarSalvosState extends State<ListarSalvos> {
 
   Future<List<Map<String, dynamic>>> _carregarContratos() async {
     final contratos = await DAOContratoSocial().buscarTodos();
-    print('Contratos encontrados: ${contratos.length}');
     final List<Map<String, dynamic>> contratosComDetalhes = [];
 
     for (final contrato in contratos) {
-      print('Processando contrato ID: ${contrato.id}');
       final empresa = await DAOEmpresa().buscarPorId(contrato.empresaId);
-      print('Empresa do contrato ${contrato.id}: ${empresa?.nomeEmpresarial}');
       final socios = await DAOSocio().buscarPorContratoSocial(contrato.id!);
-      print('Sócios do contrato ${contrato.id}: ${socios.length}');
       final clausulas = await DAOClausulas().buscarPorContratoSocial(
         contrato.id!,
       );
-      print('Cláusulas do contrato ${contrato.id}: ${clausulas.length}');
 
       if (empresa != null) {
         contratosComDetalhes.add({
