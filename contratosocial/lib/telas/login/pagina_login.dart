@@ -2,6 +2,7 @@ import 'package:contratosocial/telas/lerContrato/ler_contrato.dart';
 import 'package:contratosocial/telas/dashboard/dashboard.dart';
 import 'package:flutter/material.dart';
 import '../cadastro/pagina_cadastro.dart';
+import '../RecuperarSenha/pagina_recuperar.dart';
 import '../../models/usuario.dart';
 import '../../banco/database_helper_segundo_plano.dart';
 import 'package:contratosocial/configuracao/rotas.dart';
@@ -45,6 +46,14 @@ class _LoginPageState extends State<PaginaLogin> {
       MaterialPageRoute(builder: (context) => const PaginaCadastro()),
     );
   }
+
+  void _irParaRecuperarSenha() {
+  Navigator.push(
+    context, 
+    MaterialPageRoute(builder: (context) => const PaginaRecuperar()),
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -157,8 +166,20 @@ class _LoginPageState extends State<PaginaLogin> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
+                        ),
+                      ),
+                    TextButton(
+                      onPressed: _irParaRecuperarSenha,
+                      child: const Text(
+                        "Esqueci minha senha",
+                        style: TextStyle(
+                          color: Color(0xFF0860DB),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
+
                   ],
                 ),
               ),

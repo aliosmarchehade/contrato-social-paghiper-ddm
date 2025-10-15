@@ -45,4 +45,31 @@ class DatabaseHelper {
     final db = await ConexaoSQLite.database;
     await db.delete('usuarios');
   }
+
+  //função para buscar user pelo email
+  Future<Usuario?> buscarUsuarioPorEmail(String email) async {
+  final db = await ConexaoSQLite.database;
+  final resultado = await db.query(
+    'usuarios',
+    where: 'email = ?',
+    whereArgs: [email],
+  );
+
+  if (resultado.isNotEmpty) {
+    return Usuario.fromMap(resultado.first);
+  }
+  return null;
+}
+//funcao para atualizar a senha
+Future<int> atualizarSenha(String email, String novaSenha) async {
+  final db = await ConexaoSQLite.database;
+  return await db.update(
+    'usuarios',
+    {'senha': novaSenha},
+    where: 'email = ?',
+    whereArgs: [email],
+  );
+}
+
+
 }
