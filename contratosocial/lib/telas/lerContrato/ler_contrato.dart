@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:contratosocial/banco/sqlite/conexao_sqlite.dart';
 import 'package:contratosocial/banco/sqlite/dao/administracao_dao.dart';
 import 'package:contratosocial/banco/sqlite/dao/capital_social_dao.dart';
@@ -18,6 +17,7 @@ import 'package:contratosocial/models/duracao_exercicio_social.dart';
 import 'package:contratosocial/models/empresa.dart';
 import 'package:contratosocial/models/endereco.dart';
 import 'package:contratosocial/models/socio.dart';
+import 'package:contratosocial/components/dialog_detalhes_contrato.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
@@ -35,6 +35,7 @@ class LerContrato extends StatefulWidget {
 class _LerContratoState extends State<LerContrato> {
   String? _fileName;
   Uint8List? _fileBytes;
+  int? _contratoId; // To store the ID of the saved contract
 
   Future<void> _pickFile() async {
     try {
@@ -50,13 +51,16 @@ class _LerContratoState extends State<LerContrato> {
           _fileBytes = result.files.single.bytes;
         });
 
-        await _inserirMockNoBanco();
+        // Save mock data and get contract ID
+        final contratoId = await _inserirMockNoBanco();
+
+        setState(() {
+          _contratoId = contratoId; // Store the contract ID
+        });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Mock cadastrado com sucesso!")),
+          const SnackBar(content: Text("Contrato cadastrado com sucesso!")),
         );
-
-        Navigator.of(context).pushNamed(Rotas.listarContratosSalvos);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Nenhum arquivo selecionado.")),
@@ -70,8 +74,9 @@ class _LerContratoState extends State<LerContrato> {
     }
   }
 
-  Future<void> _inserirMockNoBanco() async {
+  Future<int> _inserirMockNoBanco() async {
     final db = await ConexaoSQLite.database;
+    late int contratoId;
     await db.transaction((txn) async {
       try {
         // Save Endereço
@@ -116,7 +121,7 @@ class _LerContratoState extends State<LerContrato> {
           capitalSocialId: capitalId,
           duracaoExercicioId: duracaoId,
         );
-        final contratoId = await DAOContratoSocial().salvar(contrato, db: txn);
+        contratoId = await DAOContratoSocial().salvar(contrato, db: txn);
 
         for (var socio in MockData.mockSocios) {
           final newSocio = DTOSocio(
@@ -141,15 +146,63 @@ class _LerContratoState extends State<LerContrato> {
           );
           final clausulaId = await DAOClausulas().salvar(newClausula, db: txn);
         }
-
-        final resultado = await txn.query('contrato_social');
       } catch (e) {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text("Erro ao inserir mock: $e")));
-        rethrow; // Propaga o erro para a transação falhar
+        rethrow; // Propagate the error to fail the transaction
       }
     });
+    return contratoId;
+  }
+
+  Future<void> _showContractDetails() async {
+    if (_contratoId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Nenhum contrato disponível para visualização."),
+        ),
+      );
+      return;
+    }
+
+    try {
+      final contrato = await DAOContratoSocial().buscarPorId(_contratoId!);
+      if (contrato == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Contrato não encontrado.")),
+        );
+        return;
+      }
+
+      final empresa = await DAOEmpresa().buscarPorId(contrato.empresaId);
+      final socios = await DAOSocio().buscarPorContratoSocial(_contratoId!);
+      final clausulas = await DAOClausulas().buscarPorContratoSocial(
+        _contratoId!,
+      );
+
+      if (empresa == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Empresa não encontrada.")),
+        );
+        return;
+      }
+
+      showDialog(
+        context: context,
+        builder:
+            (context) => DialogDetalhesContrato(
+              contrato: contrato,
+              empresa: empresa,
+              socios: socios,
+              clausulas: clausulas,
+            ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Erro ao carregar detalhes do contrato: $e")),
+      );
+    }
   }
 
   void _viewPdf() {
@@ -301,10 +354,57 @@ class _LerContratoState extends State<LerContrato> {
                           ),
                         ),
                       ],
+                      if (_contratoId != null) ...[
+                        const SizedBox(height: 20),
+                        FilledButton.icon(
+                          style: FilledButton.styleFrom(
+                            backgroundColor: const Color(0xFF0860DB),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 14,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            elevation: 2,
+                          ),
+                          onPressed: _showContractDetails,
+                          icon: const Icon(
+                            Icons.info_outline,
+                            color: Colors.white,
+                          ),
+                          label: const Text(
+                            "Ver Detalhes do Contrato",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),
               ),
+              if (_contratoId != null) ...[
+                const SizedBox(height: 20),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(
+                      context,
+                    ).pushNamed(Rotas.listarContratosSalvos);
+                  },
+                  child: const Text(
+                    "Ir para Contratos Salvos",
+                    style: TextStyle(
+                      color: Color(0xFF0860DB),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
         ),
