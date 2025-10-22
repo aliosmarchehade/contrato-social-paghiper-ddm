@@ -26,7 +26,6 @@
 # flutter:
 #   uses-material-design: true
 
-
 name: contratosocial
 description: "A new Flutter project."
 publish_to: 'none'
@@ -38,6 +37,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
   fl_chart: 
   file_picker: 
   mask_text_input_formatter: 
@@ -46,16 +46,17 @@ dependencies:
   sqflite_common_ffi:
   sqflite_common_ffi_web:
   cupertino_icons:
-  google_fonts: ^6.2.1
   shared_preferences: ^2.5.3
-  pdfx: ^2.7.0
 
+  # VERSÕES COMPATÍVEIS
+  google_fonts: ^4.0.4     # <-- versão que usa http 0.13.x
+  pdfx: ^2.7.0
+  pdf_text: ^0.5.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
-
 
 flutter:
   uses-material-design: true
