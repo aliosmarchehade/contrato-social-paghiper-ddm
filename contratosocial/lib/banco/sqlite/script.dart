@@ -80,6 +80,7 @@ class ScriptSQLite {
         administracao_id INTEGER NOT NULL,
         capital_social_id INTEGER NOT NULL,
         duracao_exercicio_id INTEGER NOT NULL,
+        favorito INTEGER NOT NULL DEFAULT 0,
         FOREIGN KEY (empresa_id) REFERENCES empresa(id),
         FOREIGN KEY (administracao_id) REFERENCES administracao(id) ON DELETE CASCADE,
         FOREIGN KEY (capital_social_id) REFERENCES capital_social(id) ON DELETE CASCADE,

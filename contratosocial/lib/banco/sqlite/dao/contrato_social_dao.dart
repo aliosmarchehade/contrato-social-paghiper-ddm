@@ -73,4 +73,32 @@ class DAOContratoSocial {
     final db = await ConexaoSQLite.database;
     return await db.delete(_tabela, where: 'id = ?', whereArgs: [id]);
   }
+
+  Future<void> atualizarFavorito(int id, bool favorito) async {
+  final db = await ConexaoSQLite.database;
+  await db.update(
+    'contrato_social',
+    {'favorito': favorito ? 1 : 0},
+    where: 'id = ?',
+    whereArgs: [id],
+  );
+}
+
+Future<List<DTOContratoSocial>> buscarFavoritos() async {
+  final db = await ConexaoSQLite.database;
+  final maps = await db.query('contrato_social', where: 'favorito = 1');
+  return List.generate(maps.length, (i) => DTOContratoSocial.fromMap(maps[i]));
+}
+
+Future<List<DTOContratoSocial>> listarFavoritos() async {
+  final db = await ConexaoSQLite.database;
+  final resultado = await db.query(
+    'contrato_social',
+    where: 'favorito = ?',
+    whereArgs: [1],
+  );
+
+  return resultado.map((e) => DTOContratoSocial.fromMap(e)).toList();
+}
+
 }

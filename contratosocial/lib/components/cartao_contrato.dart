@@ -1,3 +1,4 @@
+import 'package:contratosocial/banco/sqlite/dao/contrato_social_dao.dart';
 import 'package:contratosocial/models/contrato_social.dart';
 import 'package:contratosocial/models/empresa.dart';
 import 'package:contratosocial/models/socio.dart';
@@ -24,23 +25,44 @@ class CartaoContrato extends StatefulWidget {
 }
 
 class _CartaoContratoState extends State<CartaoContrato> {
-  bool _isFavorito = false; // Estado do favorito
+  late bool _isFavorito; // inicializado no initState
 
-  void _toggleFavorito() {
-    setState(() {
-      _isFavorito = !_isFavorito;
-    });
+  @override
+  void initState() {
+    super.initState();
+    // inicializa com o valor que veio do DTO (lembre-se de manter esse campo no DTO)
+    _isFavorito = widget.contrato.favorito;
+  }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          _isFavorito
-              ? 'Contrato adicionado aos favoritos!'
-              : 'Contrato removido dos favoritos!',
+  Future<void> _toggleFavorito() async {
+    // mudança otimista na UI
+    setState(() => _isFavorito = !_isFavorito);
+
+    try {
+      // persiste no banco
+      await DAOContratoSocial().atualizarFavorito(widget.contrato.id!, _isFavorito);
+
+      // feedback positivo
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            _isFavorito
+                ? 'Contrato adicionado aos favoritos!'
+                : 'Contrato removido dos favoritos!',
+          ),
+          duration: const Duration(seconds: 2),
         ),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+      );
+    } catch (e) {
+      // em caso de erro, reverte a mudança visual e informa o usuário
+      setState(() => _isFavorito = !_isFavorito);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao atualizar favorito: $e'),
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    }
   }
 
   @override
@@ -200,7 +222,7 @@ class _CartaoContratoState extends State<CartaoContrato> {
             child: IconButton(
               icon: Icon(
                 _isFavorito ? Icons.star : Icons.star_border,
-                color: const Color.fromARGB(255, 0, 0, 0),  
+                color: _isFavorito ? const Color.fromARGB(255, 0, 0, 0) : Colors.grey[700],
                 size: 28,
               ),
               onPressed: _toggleFavorito,
