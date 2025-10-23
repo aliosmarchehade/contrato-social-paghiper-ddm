@@ -3,7 +3,7 @@ import 'package:contratosocial/models/empresa.dart';
 import 'package:contratosocial/models/socio.dart';
 import 'package:flutter/material.dart';
 
-class CartaoContrato extends StatelessWidget {
+class CartaoContrato extends StatefulWidget {
   final DTOContratoSocial contrato;
   final DTOEmpresa empresa;
   final List<DTOSocio> socios;
@@ -20,103 +20,128 @@ class CartaoContrato extends StatelessWidget {
   });
 
   @override
+  State<CartaoContrato> createState() => _CartaoContratoState();
+}
+
+class _CartaoContratoState extends State<CartaoContrato> {
+  bool _isFavorito = false; // Estado do favorito
+
+  void _toggleFavorito() {
+    setState(() {
+      _isFavorito = !_isFavorito;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          _isFavorito
+              ? 'Contrato adicionado aos favoritos!'
+              : 'Contrato removido dos favoritos!',
+        ),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Card(
       color: const Color.fromARGB(255, 194, 213, 241),
       elevation: 5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       margin: const EdgeInsets.only(bottom: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.business, color: Colors.blueAccent),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    "Empresa: ${empresa.nomeEmpresarial}",
-                    style: const TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                const Icon(Icons.badge, color: Colors.blueAccent),
-                const SizedBox(width: 8),
-                Text("CNPJ: ${empresa.cnpj}"),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                const Icon(Icons.upload, color: Colors.blueAccent),
-                const SizedBox(width: 8),
-                Text(
-                  "Data de Upload: ${contrato.dataUpload.toIso8601String().split('T')[0]}",
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                const Icon(Icons.event, color: Colors.blueAccent),
-                const SizedBox(width: 8),
-                Text(
-                  "Data de Processamento: ${contrato.dataProcessamento.toIso8601String().split('T')[0]}",
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                const Icon(Icons.group, color: Colors.blueAccent),
-                const SizedBox(width: 8),
-                const Text(
-                  "Sócios:",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            ...socios.map<Widget>(
-              (s) => Padding(
-                padding: const EdgeInsets.only(left: 24),
-                child: Text("- ${s.nome} (${s.documento})"),
-              ),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                Row(
+                  children: [
+                    const Icon(Icons.business, color: Colors.blueAccent),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        "Empresa: ${widget.empresa.nomeEmpresarial}",
+                        style: const TextStyle(fontWeight: FontWeight.w500),
+                      ),
                     ),
-                  ),
-                  onPressed: onVerDetalhes,
-                  icon: const Icon(Icons.visibility, color: Colors.white),
-                  label: const Text(
-                    "Ver detalhes",
-                    style: TextStyle(color: Colors.white),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Icon(Icons.badge, color: Colors.blueAccent),
+                    const SizedBox(width: 8),
+                    Text("CNPJ: ${widget.empresa.cnpj}"),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    const Icon(Icons.upload, color: Colors.blueAccent),
+                    const SizedBox(width: 8),
+                    Text(
+                      "Data de Upload: ${widget.contrato.dataUpload.toIso8601String().split('T')[0]}",
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Icon(Icons.event, color: Colors.blueAccent),
+                    const SizedBox(width: 8),
+                    Text(
+                      "Data de Processamento: ${widget.contrato.dataProcessamento.toIso8601String().split('T')[0]}",
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    const Icon(Icons.group, color: Colors.blueAccent),
+                    const SizedBox(width: 8),
+                    const Text(
+                      "Sócios:",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                ...widget.socios.map<Widget>(
+                  (s) => Padding(
+                    padding: const EdgeInsets.only(left: 24),
+                    child: Text("- ${s.nome} (${s.documento})"),
                   ),
                 ),
-                const SizedBox(width: 8),
-                ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.redAccent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blueAccent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: widget.onVerDetalhes,
+                      icon: const Icon(Icons.visibility, color: Colors.white),
+                      label: const Text(
+                        "Ver detalhes",
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
-                  ),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder:
-                          (context) => AlertDialog(
+                    const SizedBox(width: 8),
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.redAccent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
                             backgroundColor: Colors.white,
                             title: const Text("Confirmar Exclusão"),
                             content: const Text(
@@ -144,7 +169,7 @@ class CartaoContrato extends StatelessWidget {
                                   ),
                                 ),
                                 onPressed: () {
-                                  onExcluir();
+                                  widget.onExcluir();
                                   Navigator.pop(context);
                                 },
                                 child: const Text(
@@ -154,18 +179,34 @@ class CartaoContrato extends StatelessWidget {
                               ),
                             ],
                           ),
-                    );
-                  },
-                  icon: const Icon(Icons.delete, color: Colors.white),
-                  label: const Text(
-                    "Excluir",
-                    style: TextStyle(color: Colors.white),
-                  ),
+                        );
+                      },
+                      icon: const Icon(Icons.delete, color: Colors.white),
+                      label: const Text(
+                        "Excluir",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+
+          // Ícone de estrela no canto superior direito
+          Positioned(
+            top: 8,
+            right: 8,
+            child: IconButton(
+              icon: Icon(
+                _isFavorito ? Icons.star : Icons.star_border,
+                color: const Color.fromARGB(255, 0, 0, 0),  
+                size: 28,
+              ),
+              onPressed: _toggleFavorito,
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -69,7 +69,7 @@ class _PaginaRecuperarState extends State<PaginaRecuperar> {
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF0860DB),
                       ),
-                    ),
+                    ),  
                     const SizedBox(height: 24),
                     TextFormField(
                       controller: _emailController,

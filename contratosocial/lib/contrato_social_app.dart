@@ -1,4 +1,5 @@
 import 'package:contratosocial/telas/dashboard/dashboard.dart';
+import 'package:contratosocial/telas/favoritos/tela_favoritos.dart';
 import 'package:contratosocial/telas/listarContratos/listar_contratos_salvos.dart';
 import 'package:flutter/material.dart';
 import 'package:contratosocial/configuracao/rotas.dart';
@@ -21,6 +22,7 @@ class ContratoSocialApp extends StatelessWidget {
         Rotas.lerContrato: (context) => const LerContrato(),
         Rotas.dashboard: (context) => const Dashboard(),
         Rotas.listarContratosSalvos: (context) => const ListarSalvos(),
+        Rotas.favoritos: (context) => const TelaFavoritos(),
       },
     );
   }

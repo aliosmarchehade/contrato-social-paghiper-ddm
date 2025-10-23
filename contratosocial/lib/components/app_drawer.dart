@@ -67,6 +67,14 @@ class AppDrawer extends StatelessWidget {
                   ),
                   onTap: () => Navigator.of(context).pushNamed(Rotas.listarContratosSalvos),
                 ),
+                ListTile(
+                  leading: const Icon(Icons.star, color: Color(0xFF0860DB)),
+                  title: const Text(
+                    "Favoritos",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                  onTap: () => Navigator.of(context).pushNamed(Rotas.favoritos),
+                ),
               ],
             ),
           ),
