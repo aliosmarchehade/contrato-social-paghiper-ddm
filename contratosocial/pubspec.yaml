@@ -1,3 +1,4 @@
+
 # name: contratosocial
 # description: "A new Flutter project."
 # publish_to: 'none'
@@ -9,25 +10,32 @@
 # dependencies:
 #   flutter:
 #     sdk: flutter
-#   file_picker:
+
+#   fl_chart: 
+#   file_picker: 
 #   mask_text_input_formatter: 
 #   sqflite: 
-#   path:
-#   sqflite_common_ffi: 
+#   path: 
+#   sqflite_common_ffi:
 #   sqflite_common_ffi_web:
 #   cupertino_icons:
+#   shared_preferences: ^2.5.3
+
+#   # VERSÕES COMPATÍVEIS
+#   google_fonts: ^4.0.4     # <-- versão que usa http 0.13.x
+#   pdfx: ^2.7.0
+#   pdf_text: ^0.5.0
+#   http: ^0.13.6
 
 # dev_dependencies:
 #   flutter_test:
 #     sdk: flutter
 #   flutter_lints: ^5.0.0
 
-
 # flutter:
 #   uses-material-design: true
-
 name: contratosocial
-description: "A new Flutter project."
+description: "Aplicativo para leitura e gerenciamento de contratos sociais."
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -38,20 +46,26 @@ dependencies:
   flutter:
     sdk: flutter
 
-  fl_chart: 
-  file_picker: 
-  mask_text_input_formatter: 
-  sqflite: 
-  path: 
-  sqflite_common_ffi:
-  sqflite_common_ffi_web:
-  cupertino_icons:
-  shared_preferences: ^2.5.3
+  # --- PACOTES DE INTERFACE ---
+  cupertino_icons: ^1.0.8
+  google_fonts: ^4.0.4          # Compatível com http 0.13.x
+  fl_chart: ^0.63.0             # Versão estável para Flutter 3.7
+  mask_text_input_formatter: ^2.9.0
 
-  # VERSÕES COMPATÍVEIS
-  google_fonts: ^4.0.4     # <-- versão que usa http 0.13.x
+  # --- MANIPULAÇÃO DE ARQUIVOS E DADOS ---
+  file_picker: ^5.5.0
+  path: ^1.9.0
+  shared_preferences: ^2.2.2
+
+  # --- BANCO DE DADOS LOCAL ---
+  sqflite: ^2.3.3
+  sqflite_common_ffi: ^2.3.3
+  sqflite_common_ffi_web: ^0.4.4
+
+  # --- PDF E HTTP ---
   pdfx: ^2.7.0
   pdf_text: ^0.5.0
+  http: ^0.13.6                # Mantido para compatibilidade com google_fonts
 
 dev_dependencies:
   flutter_test:
