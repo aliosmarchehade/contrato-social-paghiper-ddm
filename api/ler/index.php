@@ -1,43 +1,55 @@
 <?php
-// Define que o retorno será em JSON
+// Permitir qualquer origem (teste local)
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+
+// Permite resposta em JSON
 header('Content-Type: application/json; charset=utf-8');
 
-// Simula um pequeno atraso (como se estivesse processando)
+// Responde para requisições OPTIONS (pré-flight do navegador)
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
+// Simula atraso
 sleep(1);
 
-// JSON de exemplo que simula a resposta da IA
+// Dados mock corrigidos conforme estrutura SQLite
 $response = [
     "endereco" => [
         "logradouro" => "Rua Exemplo",
         "numero" => "123",
+        "complemento" => "Apto 101",
         "bairro" => "Centro",
         "cidade" => "São Paulo",
         "estado" => "SP",
         "cep" => "01000-000"
     ],
     "empresa" => [
-        "nomeEmpresarial" => "Empresa Mock teste PLease LTDAy",
-        "cnpj" => "12.345.678/0001-991",
-        "objetoSocial" => "Desenvolvimento de software",
-        "duracaoSociedade" => "Indeterminado"
+        "nome_empresarial" => "DANIELE AAAAAAAAAAAAAAAAAAAAA SOCORRO",
+        "cnpj" => "12.345.678/0001-99",
+        "objeto_social" => "Desenvolvimento de software",
+        "duracao_sociedade" => "Indeterminado"
     ],
     "administracao" => [
-        "tipoAdministracao" => "Individual",
-        "regras" => "Regras mock"
+        "tipo_administracao" => "Individual",
+        "regras" => "Regras mock de administração"
     ],
-    "capitalSocial" => [
-        "valorTotal" => 100000.0,
-        "formaIntegralizacao" => "Dinheiro",
-        "prazoIntegralizacao" => "Imediato"
+    "capital_social" => [
+        "valor_total" => 100000.0,
+        "forma_integralizacao" => "Dinheiro",
+        "prazo_integralizacao" => "Imediato"
     ],
-    "duracaoExercicioSocial" => [
+    "duracao_exercicio" => [
         "periodo" => "Anual",
-        "dataInicio" => "2023-01-01",
-        "dataFim" => "2023-12-31"
+        "data_inicio" => "2023-01-01",
+        "data_fim" => "2023-12-31"
     ],
-    "contratoSocial" => [
-        "dataUpload" => date('Y-m-d H:i:s'),
-        "dataProcessamento" => date('Y-m-d H:i:s')
+    "contrato_social" => [
+        "data_upload" => date('Y-m-d H:i:s'),
+        "data_processamento" => date('Y-m-d H:i:s')
     ],
     "socios" => [
         [
@@ -47,7 +59,7 @@ $response = [
             "percentual" => 50.0,
             "tipo" => "Pessoa Física",
             "nacionalidade" => "Brasileira",
-            "estadoCivil" => "Casado"
+            "estado_civil" => "Casado"
         ],
         [
             "nome" => "Sócio 2",
@@ -56,7 +68,7 @@ $response = [
             "percentual" => 50.0,
             "tipo" => "Pessoa Física",
             "nacionalidade" => "Brasileira",
-            "estadoCivil" => "Solteiro"
+            "estado_civil" => "Solteiro"
         ]
     ],
     "clausulas" => [
@@ -71,5 +83,6 @@ $response = [
     ]
 ];
 
-// Retorna o JSON simulando a resposta da IA
+// Envia resposta JSON
 echo json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+?>

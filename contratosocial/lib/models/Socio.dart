@@ -11,7 +11,7 @@ class DTOSocio implements DTO {
   final String tipo;
   final String nacionalidade;
   final String estadoCivil;
-  final int? contratoSocialId; // FK opcional
+  final int contratoSocialId; // FK opcional
   DTOSocio({
     this.id,
     required this.nome,
@@ -22,7 +22,7 @@ class DTOSocio implements DTO {
     required this.tipo,
     required this.nacionalidade,
     required this.estadoCivil,
-    this.contratoSocialId,
+    required this.contratoSocialId,
   });
   DTOSocio copyWith({
     int? id,

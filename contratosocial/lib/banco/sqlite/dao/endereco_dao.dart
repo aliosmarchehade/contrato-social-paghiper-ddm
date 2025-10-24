@@ -45,7 +45,7 @@ class DAOEndereco {
         cidade: linha['cidade'] as String,
         estado: linha['estado'] as String,
         cep: linha['cep'] as String,
-        complemento: linha['complemento'] as String?,
+        complemento: linha['complemento'] as String,
       );
     }).toList();
   }
@@ -65,7 +65,7 @@ class DAOEndereco {
         cidade: linha['cidade'] as String,
         estado: linha['estado'] as String,
         cep: linha['cep'] as String,
-        complemento: linha['complemento'] as String?,
+        complemento: linha['complemento'] as String,
       );
     }
     return null;

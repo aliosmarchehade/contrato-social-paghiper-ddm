@@ -49,7 +49,7 @@ class DAOSocio {
         tipo: linha['tipo'] as String,
         nacionalidade: linha['nacionalidade'] as String,
         estadoCivil: linha['estado_civil'] as String,
-        contratoSocialId: linha['contrato_social_id'] as int?,
+        contratoSocialId: linha['contrato_social_id'] as int,
       );
     }).toList();
   }
@@ -71,7 +71,7 @@ class DAOSocio {
         tipo: linha['tipo'] as String,
         nacionalidade: linha['nacionalidade'] as String,
         estadoCivil: linha['estado_civil'] as String,
-        contratoSocialId: linha['contrato_social_id'] as int?,
+        contratoSocialId: linha['contrato_social_id'] as int,
       );
     }
     return null;
@@ -103,7 +103,7 @@ class DAOSocio {
         tipo: linha['tipo'] as String,
         nacionalidade: linha['nacionalidade'] as String,
         estadoCivil: linha['estado_civil'] as String,
-        contratoSocialId: linha['contrato_social_id'] as int?,
+        contratoSocialId: linha['contrato_social_id'] as int,
       );
     }).toList();
   }

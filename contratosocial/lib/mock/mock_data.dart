@@ -15,10 +15,11 @@ class MockData {
     cidade: 'São Paulo',
     estado: 'SP',
     cep: '01000-000',
+    complemento: 'dfdsfdsfds'
   );
 
   static final DTOEmpresa mockEmpresa = DTOEmpresa(
-    nomeEmpresarial: 'Empresa Mock teste PLease LTDAy',
+    nomeEmpresarial: 'tes',
     cnpj: '12.345.678/0001-991',
     enderecoId: 1, // Placeholder, will be updated with actual ID
     objetoSocial: 'Desenvolvimento de software',

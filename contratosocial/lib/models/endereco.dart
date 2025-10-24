@@ -9,7 +9,7 @@ class DTOEndereco implements DTO {
   final String cidade;
   final String estado;
   final String cep;
-  final String? complemento;
+  final String complemento;
   DTOEndereco({
     this.id,
     required this.logradouro,
@@ -18,7 +18,7 @@ class DTOEndereco implements DTO {
     required this.cidade,
     required this.estado,
     required this.cep,
-    this.complemento,
+    required this.complemento,
   });
   DTOEndereco copyWith({
     int? id,
