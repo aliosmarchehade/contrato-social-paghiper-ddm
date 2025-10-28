@@ -76,7 +76,8 @@ class _LerContratoState extends State<LerContrato> {
   }
 
   Future<int> _enviarPdfParaApi(Uint8List fileBytes, String fileName) async {
-    final uri = Uri.parse('http://172.20.20.252:8000/ler');
+    // Sempre dar "php -S 0.0.0.0:8000 -t ." na pasta /api e utilizar o Ip da sua maquina para acessar
+    final uri = Uri.parse('http://192.168.250.15:8000/ler');
 
     final request = http.MultipartRequest('POST', uri);
     request.files.add(
@@ -96,236 +97,137 @@ class _LerContratoState extends State<LerContrato> {
     return contratoId;
   }
 
-Future<int> _inserirDadosNoBanco(Map<String, dynamic> data) async {
-  final db = await ConexaoSQLite.database;
-  late int contratoId;
+  Future<int> _inserirDadosNoBanco(Map<String, dynamic> data) async {
+    final db = await ConexaoSQLite.database;
+    late int contratoId;
 
-  await db.transaction((txn) async {
-    try {
-      // Função auxiliar para garantir strings seguras
-      String s(value) => value?.toString() ?? '';
-      double d(value) => (value is num) ? value.toDouble() : 0.0;
+    await db.transaction((txn) async {
+      try {
+        // Função auxiliar para garantir strings seguras
+        String s(value) => value?.toString() ?? '';
+        double d(value) => (value is num) ? value.toDouble() : 0.0;
 
-      // Endereço
-      final enderecoJson = data['endereco'] ?? {};
-      final endereco = DTOEndereco(
-        logradouro: s(enderecoJson['logradouro']),
-        numero: s(enderecoJson['numero']),
-        bairro: s(enderecoJson['bairro']),
-        cidade: s(enderecoJson['cidade']),
-        estado: s(enderecoJson['estado']),
-        cep: s(enderecoJson['cep']),
-        complemento: s(enderecoJson['complemento']),
-      );
-      final enderecoId = await DAOEndereco().salvar(endereco, db: txn);
+        // Endereço
+        final enderecoJson = data['endereco'] ?? {};
+        final endereco = DTOEndereco(
+          logradouro: s(enderecoJson['logradouro']),
+          numero: s(enderecoJson['numero']),
+          bairro: s(enderecoJson['bairro']),
+          cidade: s(enderecoJson['cidade']),
+          estado: s(enderecoJson['estado']),
+          cep: s(enderecoJson['cep']),
+          complemento: s(enderecoJson['complemento']),
+        );
+        final enderecoId = await DAOEndereco().salvar(endereco, db: txn);
 
-      // Empresa
-      final empresaJson = data['empresa'] ?? {};
-      final empresa = DTOEmpresa(
-        nomeEmpresarial: s(empresaJson['nome_empresarial']),
-        cnpj: s(empresaJson['cnpj']),
-        enderecoId: enderecoId,
-        objetoSocial: s(empresaJson['objeto_social']),
-        duracaoSociedade: s(empresaJson['duracao_sociedade']),
-      );
-      final empresaId = await DAOEmpresa().salvar(empresa, db: txn);
-
-      // Administração
-      final administracaoJson = data['administracao'] ?? {};
-      final administracao = DTOAdministracao(
-        tipoAdministracao: s(administracaoJson['tipo_administracao']),
-        regras: s(administracaoJson['regras']),
-      );
-      final administracaoId = await DAOAdministracao().salvar(administracao, db: txn);
-
-      // Capital Social
-      final capitalJson = data['capital_social'] ?? {};
-      final capital = DTOCapitalSocial(
-        valorTotal: d(capitalJson['valor_total']),
-        formaIntegralizacao: s(capitalJson['forma_integralizacao']),
-        prazoIntegralizacao: s(capitalJson['prazo_integralizacao']),
-      );
-      final capitalId = await DAOCapitalSocial().salvar(capital, db: txn);
-
-      // Duração do Exercício Social
-      final duracaoJson = data['duracao_exercicio'] ?? {};
-      final periodo = s(duracaoJson['periodo']);
-      final dataInicio = duracaoJson['data_inicio'] != null
-          ? DateTime.parse(s(duracaoJson['data_inicio']))
-          : DateTime.now();
-      final dataFim = duracaoJson['data_fim'] != null
-          ? DateTime.parse(s(duracaoJson['data_fim']))
-          : DateTime.now();
-
-      final duracao = DTODuracaoExercicioSocial(
-        periodo: periodo,
-        dataInicio: dataInicio,
-        dataFim: dataFim,
-      );
-      final duracaoId = await DAODuracaoExercicioSocial().salvar(duracao, db: txn);
-
-      // Contrato Social
-      final contratoJson = data['contrato_social'] ?? {};
-      final contrato = DTOContratoSocial(
-        dataUpload: contratoJson['data_upload'] != null
-            ? DateTime.parse(s(contratoJson['data_upload']))
-            : DateTime.now(),
-        dataProcessamento: contratoJson['data_processamento'] != null
-            ? DateTime.parse(s(contratoJson['data_processamento']))
-            : DateTime.now(),
-        empresaId: empresaId,
-        administracaoId: administracaoId,
-        capitalSocialId: capitalId,
-        duracaoExercicioId: duracaoId,
-      );
-      contratoId = await DAOContratoSocial().salvar(contrato, db: txn);
-
-      // Sócios
-      final sociosJson = data['socios'] as List<dynamic>? ?? [];
-      for (var socioJson in sociosJson) {
-        final socio = DTOSocio(
-          nome: s(socioJson['nome']),
-          documento: s(socioJson['documento']),
+        // Empresa
+        final empresaJson = data['empresa'] ?? {};
+        final empresa = DTOEmpresa(
+          nomeEmpresarial: s(empresaJson['nome_empresarial']),
+          cnpj: s(empresaJson['cnpj']),
           enderecoId: enderecoId,
-          profissao: s(socioJson['profissao']),
-          percentual: d(socioJson['percentual']),
-          tipo: s(socioJson['tipo']),
-          nacionalidade: s(socioJson['nacionalidade']),
-          estadoCivil: s(socioJson['estado_civil']),
-          contratoSocialId: contratoId,
+          objetoSocial: s(empresaJson['objeto_social']),
+          duracaoSociedade: s(empresaJson['duracao_sociedade']),
         );
-        await DAOSocio().salvar(socio, db: txn);
-      }
+        final empresaId = await DAOEmpresa().salvar(empresa, db: txn);
 
-      // Cláusulas
-      final clausulasJson = data['clausulas'] as List<dynamic>? ?? [];
-      for (var clausulaJson in clausulasJson) {
-        final clausula = DTOClausulas(
-          titulo: s(clausulaJson['titulo']),
-          descricao: s(clausulaJson['descricao']),
-          contratoSocialId: contratoId,
+        // Administração
+        final administracaoJson = data['administracao'] ?? {};
+        final administracao = DTOAdministracao(
+          tipoAdministracao: s(administracaoJson['tipo_administracao']),
+          regras: s(administracaoJson['regras']),
         );
-        await DAOClausulas().salvar(clausula, db: txn);
+        final administracaoId = await DAOAdministracao().salvar(
+          administracao,
+          db: txn,
+        );
+
+        // Capital Social
+        final capitalJson = data['capital_social'] ?? {};
+        final capital = DTOCapitalSocial(
+          valorTotal: d(capitalJson['valor_total']),
+          formaIntegralizacao: s(capitalJson['forma_integralizacao']),
+          prazoIntegralizacao: s(capitalJson['prazo_integralizacao']),
+        );
+        final capitalId = await DAOCapitalSocial().salvar(capital, db: txn);
+
+        // Duração do Exercício Social
+        final duracaoJson = data['duracao_exercicio'] ?? {};
+        final periodo = s(duracaoJson['periodo']);
+        final dataInicio =
+            duracaoJson['data_inicio'] != null
+                ? DateTime.parse(s(duracaoJson['data_inicio']))
+                : DateTime.now();
+        final dataFim =
+            duracaoJson['data_fim'] != null
+                ? DateTime.parse(s(duracaoJson['data_fim']))
+                : DateTime.now();
+
+        final duracao = DTODuracaoExercicioSocial(
+          periodo: periodo,
+          dataInicio: dataInicio,
+          dataFim: dataFim,
+        );
+        final duracaoId = await DAODuracaoExercicioSocial().salvar(
+          duracao,
+          db: txn,
+        );
+
+        // Contrato Social
+        final contratoJson = data['contrato_social'] ?? {};
+        final contrato = DTOContratoSocial(
+          dataUpload:
+              contratoJson['data_upload'] != null
+                  ? DateTime.parse(s(contratoJson['data_upload']))
+                  : DateTime.now(),
+          dataProcessamento:
+              contratoJson['data_processamento'] != null
+                  ? DateTime.parse(s(contratoJson['data_processamento']))
+                  : DateTime.now(),
+          empresaId: empresaId,
+          administracaoId: administracaoId,
+          capitalSocialId: capitalId,
+          duracaoExercicioId: duracaoId,
+        );
+        contratoId = await DAOContratoSocial().salvar(contrato, db: txn);
+
+        // Sócios
+        final sociosJson = data['socios'] as List<dynamic>? ?? [];
+        for (var socioJson in sociosJson) {
+          final socio = DTOSocio(
+            nome: s(socioJson['nome']),
+            documento: s(socioJson['documento']),
+            enderecoId: enderecoId,
+            profissao: s(socioJson['profissao']),
+            percentual: d(socioJson['percentual']),
+            tipo: s(socioJson['tipo']),
+            nacionalidade: s(socioJson['nacionalidade']),
+            estadoCivil: s(socioJson['estado_civil']),
+            contratoSocialId: contratoId,
+          );
+          await DAOSocio().salvar(socio, db: txn);
+        }
+
+        // Cláusulas
+        final clausulasJson = data['clausulas'] as List<dynamic>? ?? [];
+        for (var clausulaJson in clausulasJson) {
+          final clausula = DTOClausulas(
+            titulo: s(clausulaJson['titulo']),
+            descricao: s(clausulaJson['descricao']),
+            contratoSocialId: contratoId,
+          );
+          await DAOClausulas().salvar(clausula, db: txn);
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Erro ao inserir dados da API: $e")),
+        );
+        rethrow;
       }
+    });
 
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Erro ao inserir dados da API: $e")),
-      );
-      rethrow;
-    }
-  });
-
-  return contratoId;
-}
-
-
-  // Future<int> _inserirDadosNoBanco(Map<String, dynamic> data) async {
-  //   final db = await ConexaoSQLite.database;
-  //   late int contratoId;
-
-  //   await db.transaction((txn) async {
-  //     try {
-  //       // Endereço
-  //       final enderecoJson = data['endereco'];
-  //       final endereco = DTOEndereco(
-  //         logradouro: enderecoJson['logradouro'],
-  //         numero: enderecoJson['numero'],
-  //         bairro: enderecoJson['bairro'],
-  //         cidade: enderecoJson['cidade'],
-  //         estado: enderecoJson['estado'],
-  //         cep: enderecoJson['cep'],
-  //         complemento: enderecoJson['complemento']
-  //       );
-  //       final enderecoId = await DAOEndereco().salvar(endereco, db: txn);
-
-  //       // Empresa
-  //       final empresaJson = data['empresa'];
-  //       final empresa = DTOEmpresa(
-  //         nomeEmpresarial: empresaJson['nomeEmpresarial'],
-  //         cnpj: empresaJson['cnpj'],
-  //         enderecoId: enderecoId,
-  //         objetoSocial: empresaJson['objetoSocial'],
-  //         duracaoSociedade: empresaJson['duracaoSociedade'],
-  //       );
-  //       final empresaId = await DAOEmpresa().salvar(empresa, db: txn);
-
-  //       // Administração
-  //       final administracaoJson = data['administracao'];
-  //       final administracao = DTOAdministracao(
-  //         tipoAdministracao: administracaoJson['tipoAdministracao'],
-  //         regras: administracaoJson['regras'],
-  //       );
-  //       final administracaoId =
-  //           await DAOAdministracao().salvar(administracao, db: txn);
-
-  //       // Capital Social
-  //       final capitalJson = data['capitalSocial'];
-  //       final capital = DTOCapitalSocial(
-  //         valorTotal: (capitalJson['valorTotal'] as num).toDouble(),
-  //         formaIntegralizacao: capitalJson['formaIntegralizacao'],
-  //         prazoIntegralizacao: capitalJson['prazoIntegralizacao'],
-  //       );
-  //       final capitalId = await DAOCapitalSocial().salvar(capital, db: txn);
-
-  //       // Duração Exercício
-  //       final duracaoJson = data['duracaoExercicio'];
-  //       final duracao = DTODuracaoExercicioSocial(
-  //         periodo: duracaoJson['periodo'],
-  //         dataInicio: DateTime.parse(duracaoJson['dataInicio']),
-  //         dataFim: DateTime.parse(duracaoJson['dataFim']),
-  //       );
-  //       final duracaoId = await DAODuracaoExercicioSocial()
-  //           .salvar(duracao, db: txn);
-
-  //       // Contrato
-  //       final contratoJson = data['contrato'];
-  //       final contrato = DTOContratoSocial(
-  //         dataUpload: DateTime.parse(contratoJson['dataUpload']),
-  //         dataProcessamento: DateTime.parse(contratoJson['dataProcessamento']),
-  //         empresaId: empresaId,
-  //         administracaoId: administracaoId,
-  //         capitalSocialId: capitalId,
-  //         duracaoExercicioId: duracaoId,
-  //       );
-  //       contratoId = await DAOContratoSocial().salvar(contrato, db: txn);
-
-  //       // Sócios
-  //       final sociosJson = data['socios'] as List<dynamic>;
-  //       for (var socioJson in sociosJson) {
-  //         final socio = DTOSocio(
-  //           nome: socioJson['nome'],
-  //           documento: socioJson['documento'],
-  //           enderecoId: enderecoId,
-  //           profissao: socioJson['profissao'],
-  //           percentual: (socioJson['percentual'] as num).toDouble(),
-  //           tipo: socioJson['tipo'],
-  //           nacionalidade: socioJson['nacionalidade'],
-  //           estadoCivil: socioJson['estadoCivil'],
-  //           contratoSocialId: contratoId,
-  //         );
-  //         await DAOSocio().salvar(socio, db: txn);
-  //       }
-
-  //       // Cláusulas
-  //       final clausulasJson = data['clausulas'] as List<dynamic>;
-  //       for (var clausulaJson in clausulasJson) {
-  //         final clausula = DTOClausulas(
-  //           titulo: clausulaJson['titulo'],
-  //           descricao: clausulaJson['descricao'],
-  //           contratoSocialId: contratoId,
-  //         );
-  //         await DAOClausulas().salvar(clausula, db: txn);
-  //       }
-  //     } catch (e) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //           SnackBar(content: Text("Erro ao inserir dados da API: $e")));
-  //       rethrow;
-  //     }
-  //   });
-
-  //   return contratoId;
-  // }
+    return contratoId;
+  }
 
   Future<void> _showContractDetails() async {
     if (_contratoId == null) {
@@ -348,7 +250,9 @@ Future<int> _inserirDadosNoBanco(Map<String, dynamic> data) async {
 
       final empresa = await DAOEmpresa().buscarPorId(contrato.empresaId);
       final socios = await DAOSocio().buscarPorContratoSocial(_contratoId!);
-      final clausulas = await DAOClausulas().buscarPorContratoSocial(_contratoId!);
+      final clausulas = await DAOClausulas().buscarPorContratoSocial(
+        _contratoId!,
+      );
 
       if (empresa == null) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -359,12 +263,13 @@ Future<int> _inserirDadosNoBanco(Map<String, dynamic> data) async {
 
       showDialog(
         context: context,
-        builder: (context) => DialogDetalhesContrato(
-          contrato: contrato,
-          empresa: empresa,
-          socios: socios,
-          clausulas: clausulas,
-        ),
+        builder:
+            (context) => DialogDetalhesContrato(
+              contrato: contrato,
+              empresa: empresa,
+              socios: socios,
+              clausulas: clausulas,
+            ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -378,8 +283,9 @@ Future<int> _inserirDadosNoBanco(Map<String, dynamic> data) async {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) =>
-              PdfViewerScreen(fileBytes: _fileBytes!, fileName: _fileName!),
+          builder:
+              (context) =>
+                  PdfViewerScreen(fileBytes: _fileBytes!, fileName: _fileName!),
         ),
       );
     } else {

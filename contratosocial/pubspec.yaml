@@ -1,39 +1,3 @@
-
-# name: contratosocial
-# description: "A new Flutter project."
-# publish_to: 'none'
-# version: 1.0.0+1
-
-# environment:
-#   sdk: ^3.7.2
-
-# dependencies:
-#   flutter:
-#     sdk: flutter
-
-#   fl_chart: 
-#   file_picker: 
-#   mask_text_input_formatter: 
-#   sqflite: 
-#   path: 
-#   sqflite_common_ffi:
-#   sqflite_common_ffi_web:
-#   cupertino_icons:
-#   shared_preferences: ^2.5.3
-
-#   # VERSÕES COMPATÍVEIS
-#   google_fonts: ^4.0.4     # <-- versão que usa http 0.13.x
-#   pdfx: ^2.7.0
-#   pdf_text: ^0.5.0
-#   http: ^0.13.6
-
-# dev_dependencies:
-#   flutter_test:
-#     sdk: flutter
-#   flutter_lints: ^5.0.0
-
-# flutter:
-#   uses-material-design: true
 name: contratosocial
 description: "Aplicativo para leitura e gerenciamento de contratos sociais."
 publish_to: 'none'
@@ -66,6 +30,7 @@ dependencies:
   pdfx: ^2.7.0
   pdf_text: ^0.5.0
   http: ^0.13.6                # Mantido para compatibilidade com google_fonts
+  path_provider: ^2.0.15
 
 dev_dependencies:
   flutter_test:
