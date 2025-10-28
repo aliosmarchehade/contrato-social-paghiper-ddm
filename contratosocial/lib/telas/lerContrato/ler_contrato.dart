@@ -76,7 +76,7 @@ class _LerContratoState extends State<LerContrato> {
   }
 
   Future<int> _enviarPdfParaApi(Uint8List fileBytes, String fileName) async {
-    final uri = Uri.parse('http://172.33.1.99:8080/ler');
+    final uri = Uri.parse('http://172.20.20.252:8000/ler');
 
     final request = http.MultipartRequest('POST', uri);
     request.files.add(
