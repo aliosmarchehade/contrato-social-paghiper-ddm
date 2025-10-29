@@ -85,11 +85,15 @@ class _LerContratoState extends State<LerContrato> {
     );
 
     final response = await request.send();
+
+    final responseBody = await response.stream.bytesToString();
+    print('Resposta completa do servidor: $responseBody');
+
     if (response.statusCode != 200) {
       throw Exception('Erro ao processar o PDF: ${response.statusCode}');
     }
 
-    final responseBody = await response.stream.bytesToString();
+    
     final data = jsonDecode(responseBody);
 
     // Salvar no banco usando os dados da API
