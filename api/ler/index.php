@@ -1,32 +1,46 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+
+require __DIR__ . '/../vendor/autoload.php';
+use Smalot\PdfParser\Parser;
 
 
-// Configuração de CORS e JSON
+// 🔹 Configuração de CORS e cabeçalhos
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header('Content-Type: application/json; charset=utf-8');
 
-// Resposta imediata a pré-flight
+// 🔹 Requisição OPTIONS (pré-flight do navegador)
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
 }
 
-// Lê corpo da requisição (texto extraído do PDF)
-$input = json_decode(file_get_contents("php://input"), true);
-if (!$input || !isset($input['texto'])) {
+// 🔹 Verifica se veio o arquivo PDF
+if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
     http_response_code(400);
-    echo json_encode(["erro" => "Texto não enviado. Envie no formato: { 'texto': 'conteúdo extraído do PDF' }"]);
+    echo json_encode(["erro" => "Envie um arquivo PDF válido."]);
     exit();
 }
 
-$textoExtraido = $input['texto'];
+try {
+    // 🔹 Lê o PDF
+    $parser = new Parser();
+    $pdf = $parser->parseFile($_FILES['file']['tmp_name']);
+    $textoExtraido = trim($pdf->getText());
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode(["erro" => "Erro ao ler PDF", "detalhes" => $e->getMessage()]);
+    exit();
+}
 
-// 🔹 Seu prompt para o Gemini:
+// 🔹 Monta o prompt para o Gemini
 $prompt = "
-Você é um assistente jurídico especializado em contratos sociais. 
-Com base no texto abaixo, extraia as informações e devolva **somente** um JSON na seguinte estrutura:
+Você é um assistente jurídico especializado em contratos sociais.
+Com base no texto abaixo, extraia as informações e devolva SOMENTE um JSON na seguinte estrutura:
 
 {
   'endereco': {
@@ -82,11 +96,10 @@ Com base no texto abaixo, extraia as informações e devolva **somente** um JSON
 }
 
 Texto do contrato social:
-\"\"\"$textoExtraido\"\"\"
-";
+\"\"\"$textoExtraido\"\"\"";
 
-// 🔑 Chave da API (MANTER SOMENTE NO SERVIDOR)
-$apiKey = "AIzaSyBi26Ta8NgQRejdvKoiTONmPFrO8JbbdxI";
+// 🔑 Chave da API Gemini (só no servidor)
+$apiKey = "SUA_CHAVE_GEMINI_AQUI";
 
 // 🔹 Requisição ao Gemini
 $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey";
@@ -109,12 +122,11 @@ $options = [
     ]
 ];
 
-$context  = stream_context_create($options);
-$response = file_get_contents($url, false, $context);
+$response = @file_get_contents($url, false, stream_context_create($options));
 
 if ($response === FALSE) {
     http_response_code(500);
-    echo json_encode(["erro" => "Falha ao se conectar com o Gemini API"]);
+    echo json_encode(["erro" => "Falha ao conectar à API Gemini"]);
     exit();
 }
 
@@ -124,6 +136,7 @@ $textoResposta = $json['candidates'][0]['content']['parts'][0]['text'] ?? null;
 
 // 🔹 Tenta converter o texto retornado em JSON
 if ($textoResposta) {
+    $textoResposta = str_replace("'", '"', $textoResposta);
     $dados = json_decode($textoResposta, true);
     if ($dados) {
         echo json_encode($dados, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
@@ -131,9 +144,8 @@ if ($textoResposta) {
     }
 }
 
-// 🔹 Caso o Gemini não retorne JSON válido
+// 🔹 Se não for JSON válido
 echo json_encode([
     "erro" => "Resposta inválida do Gemini",
     "resposta_bruta" => $textoResposta
 ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-?>
