@@ -32,67 +32,85 @@ try {
     exit();
 }
 
-$prompt = "
-Você é um assistente jurídico especializado em contratos sociais.
-Com base no texto abaixo, extraia as informações e devolva SOMENTE um JSON na seguinte estrutura:
+$prompt = <<<PROMPT
+Você é um assistente jurídico especializado em contratos sociais. 
+Analise o texto abaixo e EXTRAIA apenas os dados solicitados, retornando SOMENTE um JSON válido (não inclua explicações, comentários ou texto adicional).
 
+REGRAS IMPORTANTES:
+1) Retorne estritamente o JSON na estrutura exata (mesmos nomes de campos e hierarquia). Se um campo não existir no texto, deixe-o como string vazia "".
+2) Todas as datas obrigatoriamente no formato dd/mm/yyyy (dia e mês com dois dígitos). Ex.: 01/01/2025.
+3) Nunca retorne datas placeholder como 0000-12-31, 1970-01-01, ou formatos ISO. Se não for possível extrair/derivar uma data legítima, retorne string vazia "" para esse campo.
+4) Quando encontrar datas por extenso (ex.: '1 de janeiro de 2025', 'primeiro de janeiro de 2025', 'janeiro de 2025'), converta para dd/mm/yyyy corretamente:
+   - '1 de janeiro de 2025' -> '01/01/2025'
+   - 'janeiro de 2025' -> '01/01/2025'
+   - '2025' -> '01/01/2025'
+5) Se o texto indicar que o exercício social "coincidirá com o ano civil" e houver um ano explícito, use:
+   - data_inicio = "01/01/AAAA"
+   - data_fim = "31/12/AAAA"
+6) Se não houver ano explícito, deixe data_inicio e data_fim como "".
+7) Garanta que o JSON seja válido (use aspas duplas " para chaves e strings).
+
+ESTRUTURA DO JSON (retorne EXATAMENTE assim):
 {
-  'endereco': {
-    'logradouro': '',
-    'numero': '',
-    'complemento': '',
-    'bairro': '',
-    'cidade': '',
-    'estado': '',
-    'cep': ''
+  "endereco": {
+    "logradouro": "",
+    "numero": "",
+    "complemento": "",
+    "bairro": "",
+    "cidade": "",
+    "estado": "",
+    "cep": ""
   },
-  'empresa': {
-    'nome_empresarial': '',
-    'cnpj': '',
-    'objeto_social': '',
-    'duracao_sociedade': ''
+  "empresa": {
+    "nome_empresarial": "",
+    "cnpj": "",
+    "objeto_social": "",
+    "duracao_sociedade": ""
   },
-  'administracao': {
-    'tipo_administracao': '',
-    'regras': ''
+  "administracao": {
+    "tipo_administracao": "",
+    "regras": ""
   },
-  'capital_social': {
-    'valor_total': '',
-    'forma_integralizacao': '',
-    'prazo_integralizacao': ''
+  "capital_social": {
+    "valor_total": "",
+    "forma_integralizacao": "",
+    "prazo_integralizacao": ""
   },
-  'duracao_exercicio': {
-    'periodo': '',
-    'data_inicio': '',
-    'data_fim': ''
+  "duracao_exercicio": {
+    "periodo": "",
+    "data_inicio": "",
+    "data_fim": ""
   },
-  'contrato_social': {
-    'data_upload': '',
-    'data_processamento': ''
+  "contrato_social": {
+    "data_upload": "",
+    "data_processamento": ""
   },
-  'socios': [
+  "socios": [
     {
-      'nome': '',
-      'documento': '',
-      'profissao': '',
-      'percentual': '',
-      'tipo': '',
-      'nacionalidade': '',
-      'estado_civil': ''
+      "nome": "",
+      "documento": "",
+      "profissao": "",
+      "percentual": "",
+      "tipo": "",
+      "nacionalidade": "",
+      "estado_civil": ""
     }
   ],
-  'clausulas': [
+  "clausulas": [
     {
-      'titulo': '',
-      'descricao': ''
+      "titulo": "",
+      "descricao": ""
     }
   ]
 }
 
 Texto do contrato social:
-\"\"\"$textoExtraido\"\"\"";
+"""$textoExtraido"""
+PROMPT;
 
-$apiKey = "teste";
+
+
+$apiKey = "AIzaSyB93sdKIlHqVKd_xtmCIDpZ7XKRx912smk";
 $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$apiKey";
 
 $data = [
