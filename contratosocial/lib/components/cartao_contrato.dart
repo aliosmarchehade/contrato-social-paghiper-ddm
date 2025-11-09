@@ -68,7 +68,7 @@ class _CartaoContratoState extends State<CartaoContrato> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: const Color.fromARGB(255, 194, 213, 241),
+      color: const Color.fromARGB(255, 232, 238, 247),
       elevation: 5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       margin: const EdgeInsets.only(bottom: 16),

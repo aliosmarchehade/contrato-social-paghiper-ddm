@@ -119,7 +119,7 @@ class _DashboardState extends State<Dashboard> {
                   children: [
                     Expanded(
                       child: Card(
-                        color: const Color.fromARGB(255, 194, 213, 241),
+                        color: const Color.fromARGB(255, 232, 238, 247),
                         elevation: 5,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -153,7 +153,7 @@ class _DashboardState extends State<Dashboard> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Card(
-                        color: const Color.fromARGB(255, 194, 213, 241),
+                        color: const Color.fromARGB(255, 232, 238, 247),
                         elevation: 5,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -194,7 +194,7 @@ class _DashboardState extends State<Dashboard> {
                 ),
                 const Divider(),
                 Card(
-                  color: const Color.fromARGB(255, 194, 213, 241),
+                  color: const Color.fromARGB(255, 232, 238, 247),
                   elevation: 5,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),

@@ -13,6 +13,7 @@ import 'package:contratosocial/models/empresa.dart';
 import 'package:contratosocial/models/socio.dart';
 import 'package:contratosocial/models/capital_social.dart';
 import 'package:flutter/material.dart';
+import 'package:contratosocial/components/app_drawer.dart';
 
 class ListarSalvos extends StatefulWidget {
   const ListarSalvos({super.key});
@@ -127,10 +128,11 @@ class _ListarSalvosState extends State<ListarSalvos> {
         backgroundColor: const Color(0xFF0860DB),
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
-          "Contratos Salvos",
+          "Contratos Social - Salvos",
           style: TextStyle(color: Colors.white),
         ),
       ),
+      drawer: const AppDrawer(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

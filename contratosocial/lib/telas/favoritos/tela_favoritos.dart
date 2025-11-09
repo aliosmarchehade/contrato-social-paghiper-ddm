@@ -8,6 +8,7 @@ import 'package:contratosocial/models/contrato_social.dart';
 import 'package:contratosocial/models/empresa.dart';
 import 'package:contratosocial/models/socio.dart';
 import 'package:contratosocial/components/cartao_contrato.dart';
+import 'package:contratosocial/components/app_drawer.dart';
 
 class TelaFavoritos extends StatefulWidget {
   const TelaFavoritos({super.key});
@@ -52,12 +53,18 @@ class _TelaFavoritosState extends State<TelaFavoritos> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text("Contratos Favoritos",
-        style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)  )
-        ),    
+        elevation: 10,
+        shadowColor: Colors.black,
         backgroundColor: const Color(0xFF0860DB),
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text(
+          "Contrato Social - Favoritos",
+          style: TextStyle(color: Colors.white),
+        ),
       ),
+      drawer: const AppDrawer(),
       body: _favoritosCompletos.isEmpty
           ? const Center(
               child: Text(

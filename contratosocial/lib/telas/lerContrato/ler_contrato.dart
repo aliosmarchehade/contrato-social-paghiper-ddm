@@ -299,14 +299,15 @@ class _LerContratoState extends State<LerContrato> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FC),
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        elevation: 10,
+        shadowColor: Colors.black,
         backgroundColor: const Color(0xFF0860DB),
-        elevation: 2,
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
-          "Ler Contrato Social",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+          "Contrato Social - Leitura",
+          style: TextStyle(color: Colors.white),
         ),
       ),
       drawer: const AppDrawer(),
