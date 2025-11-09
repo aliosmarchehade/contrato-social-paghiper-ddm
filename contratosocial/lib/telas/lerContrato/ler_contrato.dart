@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:contratosocial/banco/sqlite/conexao_sqlite.dart';
@@ -37,47 +38,98 @@ class _LerContratoState extends State<LerContrato> {
   String? _fileName;
   Uint8List? _fileBytes;
   int? _contratoId;
+  bool _isLoading = false;
+  double _progress = 0.0;
+  Timer? _progressTimer;
+
+  @override
+  void dispose() {
+    _progressTimer?.cancel();
+    super.dispose();
+  }
+
+  // Simula progresso de 0% a 90% durante a operação
+  void _startProgressSimulation() {
+    _progress = 0.0;
+    _progressTimer?.cancel();
+    _progressTimer = Timer.periodic(const Duration(milliseconds: 80), (timer) {
+      setState(() {
+        if (_progress < 0.9) {
+          _progress += 0.03; // Aumenta gradualmente
+        } else {
+          _progress = 0.9; // Não passa de 90% até a resposta real
+          timer.cancel();
+        }
+      });
+    });
+  }
+
+  // Completa o progresso até 100% e espera 1 segundo
+  Future<void> _completeProgressWithDelay() async {
+    _progressTimer?.cancel();
+    setState(() {
+      _progress = 1.0; // Completa 100%
+    });
+    // Aguarda 2 segundo para o usuário ver o 100%
+    await Future.delayed(const Duration(seconds: 2));
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+        _progress = 0.0;
+      });
+    }
+  }
+
+  // Mensagem dinâmica baseada no progresso
+  String _getProgressMessage() {
+    if (_progress < 0.6) return "Lendo PDF...";
+    if (_progress < 1.2) return "Extraindo dados...";
+    if (_progress < 1.8) return "Processando com IA...";
+    return "Finalizando...";
+  }
 
   Future<void> _pickFile() async {
-    try {
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['pdf'],
-        withData: true,
+    if (_isLoading) return;
+    // 1. PRIMEIRO seleciona o arquivo (SEM LOADING)
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+      withData: true,
+    );
+    if (result == null || result.files.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Nenhum arquivo selecionado.")),
       );
-
-      if (result != null && result.files.isNotEmpty) {
-        setState(() {
-          _fileName = result.files.single.name;
-          _fileBytes = result.files.single.bytes;
-        });
-
-        // Enviar para API e salvar no banco
-        final contratoId = await _enviarPdfParaApi(_fileBytes!, _fileName!);
-
-        setState(() {
-          _contratoId = contratoId;
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Contrato cadastrado com sucesso!")),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Nenhum arquivo selecionado.")),
-        );
-      }
+      return;
+    }
+    // 2. SÓ AGORA ativa o loading e mostra barra de progresso
+    setState(() {
+      _isLoading = true;
+      _fileName = result.files.single.name;
+      _fileBytes = result.files.single.bytes;
+    });
+    _startProgressSimulation();
+    try {
+      final contratoId = await _enviarPdfParaApi(_fileBytes!, _fileName!);
+      setState(() {
+        _contratoId = contratoId;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Contrato cadastrado com sucesso!")),
+      );
     } catch (e) {
-      print('Erro ao selecionar arquivo: $e');
+      print('Erro ao processar: $e');
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text("Erro ao selecionar arquivo: $e")));
+      ).showSnackBar(SnackBar(content: Text("Erro ao processar contrato: $e")));
+    } finally {
+      await _completeProgressWithDelay();
     }
   }
 
   Future<int> _enviarPdfParaApi(Uint8List fileBytes, String fileName) async {
     // Sempre dar "php -S 0.0.0.0:8000 -t ." na pasta /api e utilizar o Ip da sua maquina para acessar
-    final uri = Uri.parse('http://192.168.1.26:8000/ler');
+    final uri = Uri.parse('http://192.168.1.8:8000/ler');
     //172.20.20.252
 
     final request = http.MultipartRequest('POST', uri);
@@ -94,7 +146,6 @@ class _LerContratoState extends State<LerContrato> {
       throw Exception('Erro ao processar o PDF: ${response.statusCode}');
     }
 
-    
     final data = jsonDecode(responseBody);
 
     // Salvar no banco usando os dados da API
@@ -229,37 +280,24 @@ class _LerContratoState extends State<LerContrato> {
   }
 
   Future<void> _showContractDetails() async {
-    if (_contratoId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Nenhum contrato disponível para visualização."),
-        ),
-      );
-      return;
-    }
-
+    if (_contratoId == null || _isLoading) return;
+    setState(() {
+      _isLoading = true;
+    });
+    _startProgressSimulation();
     try {
       final contrato = await DAOContratoSocial().buscarPorId(_contratoId!);
       if (contrato == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Contrato não encontrado.")),
-        );
-        return;
+        throw Exception("Contrato não encontrado");
       }
-
       final empresa = await DAOEmpresa().buscarPorId(contrato.empresaId);
       final socios = await DAOSocio().buscarPorContratoSocial(_contratoId!);
       final clausulas = await DAOClausulas().buscarPorContratoSocial(
         _contratoId!,
       );
-
       if (empresa == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Empresa não encontrada.")),
-        );
-        return;
+        throw Exception("Empresa não encontrada");
       }
-
       showDialog(
         context: context,
         builder:
@@ -274,6 +312,8 @@ class _LerContratoState extends State<LerContrato> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Erro ao carregar detalhes do contrato: $e")),
       );
+    } finally {
+      await _completeProgressWithDelay();
     }
   }
 
@@ -298,190 +338,264 @@ class _LerContratoState extends State<LerContrato> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        elevation: 10,
-        shadowColor: Colors.black,
-        backgroundColor: const Color(0xFF0860DB),
-        iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text(
-          "Contrato Social - Leitura",
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
-      drawer: const AppDrawer(),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Card(
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                elevation: 10,
-                shadowColor: Colors.black,
-                child: Padding(
-                  padding: const EdgeInsets.all(28.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFE8F0FE),
-                          shape: BoxShape.circle,
-                        ),
-                        padding: const EdgeInsets.all(20),
-                        child: const Icon(
-                          Icons.description_outlined,
-                          size: 56,
-                          color: Color(0xFF0860DB),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      const Text(
-                        "Enviar Contrato Social (PDF)",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF1A1A1A),
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 16),
-                      const Text(
-                        "Selecione o arquivo PDF do contrato social para continuar o processo.",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 14, color: Colors.black54),
-                      ),
-                      const SizedBox(height: 24),
-                      FilledButton.icon(
-                        style: FilledButton.styleFrom(
-                          backgroundColor: const Color(0xFF0860DB),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 14,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          elevation: 2,
-                        ),
-                        onPressed: _pickFile,
-                        icon: const Icon(
-                          Icons.upload_file,
-                          color: Colors.white,
-                        ),
-                        label: const Text(
-                          "Selecionar Arquivo",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                      ),
-                      if (_fileName != null) ...[
-                        const SizedBox(height: 20),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 10,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF2F6FC),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(
-                                Icons.picture_as_pdf,
-                                color: Color(0xFF0860DB),
-                              ),
-                              const SizedBox(width: 8),
-                              Flexible(
-                                child: Text(
-                                  _fileName!,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    color: Color(0xFF1A1A1A),
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.visibility,
-                                  color: Color(0xFF0860DB),
-                                ),
-                                onPressed: _viewPdf,
-                                tooltip: 'Visualizar PDF',
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                      if (_contratoId != null) ...[
-                        const SizedBox(height: 20),
-                        FilledButton.icon(
-                          style: FilledButton.styleFrom(
-                            backgroundColor: const Color(0xFF0860DB),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 14,
+    return Stack(
+      children: [
+        Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            elevation: 10,
+            shadowColor: Colors.black,
+            backgroundColor: const Color(0xFF0860DB),
+            iconTheme: const IconThemeData(color: Colors.white),
+            title: const Text(
+              "Contrato Social - Leitura",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+          drawer: const AppDrawer(),
+          body: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Card(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    elevation: 10,
+                    shadowColor: Colors.black,
+                    child: Padding(
+                      padding: const EdgeInsets.all(28.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFE8F0FE),
+                              shape: BoxShape.circle,
                             ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
+                            padding: const EdgeInsets.all(20),
+                            child: const Icon(
+                              Icons.description_outlined,
+                              size: 56,
+                              color: Color(0xFF0860DB),
                             ),
-                            elevation: 2,
                           ),
-                          onPressed: _showContractDetails,
-                          icon: const Icon(
-                            Icons.info_outline,
-                            color: Colors.white,
-                          ),
-                          label: const Text(
-                            "Ver Detalhes do Contrato",
+                          const SizedBox(height: 20),
+                          const Text(
+                            "Enviar Contrato Social (PDF)",
                             style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 0.5,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF1A1A1A),
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 16),
+                          const Text(
+                            "Selecione o arquivo PDF do contrato social para continuar o processo.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black54,
                             ),
                           ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ),
-              if (_contratoId != null) ...[
-                const SizedBox(height: 20),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(
-                      context,
-                    ).pushNamed(Rotas.listarContratosSalvos);
-                  },
-                  child: const Text(
-                    "Ir para Contratos Salvos",
-                    style: TextStyle(
-                      color: Color(0xFF0860DB),
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
+                          const SizedBox(height: 24),
+                          FilledButton.icon(
+                            style: FilledButton.styleFrom(
+                              backgroundColor: const Color(0xFF0860DB),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 14,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              elevation: 2,
+                            ),
+                            onPressed: _isLoading ? null : _pickFile,
+                            icon: const Icon(
+                              Icons.upload_file,
+                              color: Colors.white,
+                            ),
+                            label: const Text(
+                              "Selecionar Arquivo",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ),
+                          if (_fileName != null) ...[
+                            const SizedBox(height: 20),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 10,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF2F6FC),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.picture_as_pdf,
+                                    color: Color(0xFF0860DB),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Flexible(
+                                    child: Text(
+                                      _fileName!,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: Color(0xFF1A1A1A),
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.visibility,
+                                      color: Color(0xFF0860DB),
+                                    ),
+                                    onPressed: _viewPdf,
+                                    tooltip: 'Visualizar PDF',
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                          if (_contratoId != null) ...[
+                            const SizedBox(height: 20),
+                            FilledButton.icon(
+                              style: FilledButton.styleFrom(
+                                backgroundColor: const Color(0xFF0860DB),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 14,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                elevation: 2,
+                              ),
+                              onPressed:
+                                  _isLoading ? null : _showContractDetails,
+                              icon: const Icon(
+                                Icons.info_outline,
+                                color: Colors.white,
+                              ),
+                              label: const Text(
+                                "Ver Detalhes do Contrato",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ],
+                  if (_contratoId != null) ...[
+                    const SizedBox(height: 20),
+                    TextButton(
+                      onPressed:
+                          _isLoading
+                              ? null
+                              : () {
+                                Navigator.of(
+                                  context,
+                                ).pushNamed(Rotas.listarContratosSalvos);
+                              },
+                      child: const Text(
+                        "Ir para Contratos Salvos",
+                        style: TextStyle(
+                          color: Color(0xFF0860DB),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
           ),
         ),
-      ),
+        // BARRA DE PROGRESSO (APENAS DEPOIS DE SELECIONAR ARQUIVO)
+        if (_isLoading)
+          Container(
+            color: Colors.black.withOpacity(0.6),
+            child: Center(
+              child: Container(
+                width: 300,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.hourglass_empty,
+                      size: 48,
+                      color: Color(0xFF0860DB),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      _getProgressMessage(),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF1A1A1A),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: LinearProgressIndicator(
+                        value: _progress,
+                        minHeight: 12,
+                        backgroundColor: Colors.grey[300],
+                        valueColor: const AlwaysStoppedAnimation<Color>(
+                          Color.fromARGB(255, 10, 85, 170),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      "${(_progress * 100).toInt()}%",
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Color.fromARGB(255, 0, 0, 0),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
