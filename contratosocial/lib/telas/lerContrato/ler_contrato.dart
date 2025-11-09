@@ -322,8 +322,8 @@ class _LerContratoState extends State<LerContrato> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24),
                 ),
-                elevation: 4,
-                shadowColor: Colors.black12,
+                elevation: 10,
+                shadowColor: Colors.black,
                 child: Padding(
                   padding: const EdgeInsets.all(28.0),
                   child: Column(
