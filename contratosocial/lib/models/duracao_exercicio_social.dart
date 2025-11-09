@@ -4,8 +4,8 @@ class DTODuracaoExercicioSocial implements DTO {
   @override
   final int? id;
   final String periodo;
-  final DateTime dataInicio;
-  final DateTime dataFim;
+  final String dataInicio;
+  final String dataFim;
   DTODuracaoExercicioSocial({
     this.id,
     required this.periodo,
@@ -15,8 +15,8 @@ class DTODuracaoExercicioSocial implements DTO {
   DTODuracaoExercicioSocial copyWith({
     int? id,
     String? periodo,
-    DateTime? dataInicio,
-    DateTime? dataFim,
+    String? dataInicio,
+    String? dataFim,
   }) {
     return DTODuracaoExercicioSocial(
       id: id ?? this.id,

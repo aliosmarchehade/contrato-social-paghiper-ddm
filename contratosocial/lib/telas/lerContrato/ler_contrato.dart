@@ -77,7 +77,7 @@ class _LerContratoState extends State<LerContrato> {
 
   Future<int> _enviarPdfParaApi(Uint8List fileBytes, String fileName) async {
     // Sempre dar "php -S 0.0.0.0:8000 -t ." na pasta /api e utilizar o Ip da sua maquina para acessar
-    final uri = Uri.parse('http://172.20.20.252:8000/ler');
+    final uri = Uri.parse('http://192.168.1.26:8000/ler');
     //172.20.20.252
 
     final request = http.MultipartRequest('POST', uri);
@@ -159,14 +159,8 @@ class _LerContratoState extends State<LerContrato> {
         // Duração do Exercício Social
         final duracaoJson = data['duracao_exercicio'] ?? {};
         final periodo = s(duracaoJson['periodo']);
-        final dataInicio =
-            duracaoJson['data_inicio'] != null
-                ? DateTime.parse(s(duracaoJson['data_inicio']))
-                : DateTime.now();
-        final dataFim =
-            duracaoJson['data_fim'] != null
-                ? DateTime.parse(s(duracaoJson['data_fim']))
-                : DateTime.now();
+        final dataInicio = s(duracaoJson['data_inicio']);
+        final dataFim = s(duracaoJson['data_fim']);
 
         final duracao = DTODuracaoExercicioSocial(
           periodo: periodo,

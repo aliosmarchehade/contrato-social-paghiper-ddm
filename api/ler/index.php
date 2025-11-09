@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
     http_response_code(400);
-    echo json_encode(["erro" => "Envie um arquivo PDF válido."]);
+    echo json_encode(["erro" => "Envie um arquivo PDF valido."]);
     exit();
 }
 
@@ -110,7 +110,7 @@ PROMPT;
 
 
 
-$apiKey = "AIzaSyB93sdKIlHqVKd_xtmCIDpZ7XKRx912smk";
+$apiKey = "teste";
 $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$apiKey";
 
 $data = [

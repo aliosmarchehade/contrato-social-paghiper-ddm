@@ -14,8 +14,8 @@ class DAODuracaoExercicioSocial {
 
     final dados = {
       'periodo': duracao.periodo,
-      'data_inicio': duracao.dataInicio.toIso8601String(),
-      'data_fim': duracao.dataFim.toIso8601String(),
+      'data_inicio': duracao.dataInicio,
+      'data_fim': duracao.dataFim,
     };
 
     if (duracao.id != null) {
@@ -39,8 +39,8 @@ class DAODuracaoExercicioSocial {
       return DTODuracaoExercicioSocial(
         id: linha['id'] as int?,
         periodo: linha['periodo'] as String,
-        dataInicio: DateTime.parse(linha['data_inicio'] as String),
-        dataFim: DateTime.parse(linha['data_fim'] as String),
+        dataInicio: linha['data_inicio'] as String,
+        dataFim: linha['data_fim'] as String,
       );
     }).toList();
   }
@@ -55,8 +55,8 @@ class DAODuracaoExercicioSocial {
       return DTODuracaoExercicioSocial(
         id: linha['id'] as int?,
         periodo: linha['periodo'] as String,
-        dataInicio: DateTime.parse(linha['data_inicio'] as String),
-        dataFim: DateTime.parse(linha['data_fim'] as String),
+        dataInicio: linha['data_inicio'] as String,
+        dataFim: linha['data_fim'] as String,
       );
     }
     return null;

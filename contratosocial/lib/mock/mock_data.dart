@@ -40,8 +40,8 @@ class MockData {
   static final DTODuracaoExercicioSocial mockDuracao =
       DTODuracaoExercicioSocial(
         periodo: 'Anual',
-        dataInicio: DateTime(2023, 1, 1),
-        dataFim: DateTime(2023, 12, 31),
+        dataInicio: '',
+        dataFim: '',
       );
 
   static final DTOContratoSocial mockContrato = DTOContratoSocial(

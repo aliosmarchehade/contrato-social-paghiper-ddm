@@ -41,9 +41,9 @@ class ScriptSQLite {
     '''
       CREATE TABLE duracao_exercicio_social (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        periodo TEXT NOT NULL,
-        data_inicio TEXT NOT NULL,
-        data_fim TEXT NOT NULL
+        periodo TEXT,
+        data_inicio TEXT,
+        data_fim TEXT
       )
     ''',
     '''
@@ -79,7 +79,7 @@ class ScriptSQLite {
         empresa_id INTEGER NOT NULL,
         administracao_id INTEGER NOT NULL,
         capital_social_id INTEGER NOT NULL,
-        duracao_exercicio_id INTEGER NOT NULL,
+        duracao_exercicio_id INTEGER,
         favorito INTEGER NOT NULL DEFAULT 0,
         FOREIGN KEY (empresa_id) REFERENCES empresa(id),
         FOREIGN KEY (administracao_id) REFERENCES administracao(id) ON DELETE CASCADE,
