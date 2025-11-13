@@ -118,6 +118,37 @@ class _ListarSalvosState extends State<ListarSalvos> {
     }
   }
 
+  void _filterContracts(String query) {
+    List<Map<String, dynamic>> filteredContratos = List.from(_allContratos);
+
+    if (query.isNotEmpty) {
+      final lowerQuery = query.toLowerCase();
+      filteredContratos =
+          _allContratos.where((data) {
+            final empresa = data['empresa'] as DTOEmpresa;
+            return empresa.nomeEmpresarial.toLowerCase().contains(lowerQuery);
+          }).toList();
+    }
+
+    if (_sortBy == 'dataUpload') {
+      filteredContratos.sort((a, b) {
+        final aDate = (a['contrato'] as DTOContratoSocial).dataUpload;
+        final bDate = (b['contrato'] as DTOContratoSocial).dataUpload;
+        return bDate.compareTo(aDate);
+      });
+    } else if (_sortBy == 'capitalSocial') {
+      filteredContratos.sort((a, b) {
+        final aValue = (a['capitalSocial'] as DTOCapitalSocial).valorTotal;
+        final bValue = (b['capitalSocial'] as DTOCapitalSocial).valorTotal;
+        return bValue.compareTo(aValue);
+      });
+    }
+
+    setState(() {
+      _filteredContratos = filteredContratos;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -138,13 +169,8 @@ class _ListarSalvosState extends State<ListarSalvos> {
         children: [
           BarraPesquisa(
             controller: _searchController,
-            allContratos: _allContratos,
-            onFiltered: (filtered) {
-              setState(() {
-                _filteredContratos = filtered;
-              });
-            },
-            sortBy: _sortBy,
+            labelText: 'Pesquisar por nome da empresa',
+            onChanged: _filterContracts,
           ),
           Padding(
             padding: const EdgeInsets.symmetric(

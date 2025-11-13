@@ -6,4 +6,5 @@ class Rotas {
   static const String filtrarContrato = '/filtrar-contrato';
   static const String listarContratosSalvos = '/listar-contratos-salvos';
   static const String favoritos = '/favoritos';
+  static const String listarSociosSalvos = '/listar-socios-salvos';
 }

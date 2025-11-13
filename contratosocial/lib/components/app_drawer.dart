@@ -1,3 +1,4 @@
+// Alteração em lib/components/app_drawer.dart
 import 'package:flutter/material.dart';
 import 'package:contratosocial/configuracao/rotas.dart';
 
@@ -20,10 +21,7 @@ class AppDrawer extends StatelessWidget {
             ),
             accountName: const Text(
               "Danizoca",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
             accountEmail: const Text("danizoca@gmail.com"),
             currentAccountPicture: const CircleAvatar(
@@ -44,12 +42,16 @@ class AppDrawer extends StatelessWidget {
                   onTap: () => Navigator.of(context).pushNamed(Rotas.dashboard),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.description, color: Color(0xFF0860DB)),
+                  leading: const Icon(
+                    Icons.description,
+                    color: Color(0xFF0860DB),
+                  ),
                   title: const Text(
                     "Ler contrato social",
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
-                  onTap: () => Navigator.of(context).pushNamed(Rotas.lerContrato),
+                  onTap:
+                      () => Navigator.of(context).pushNamed(Rotas.lerContrato),
                 ),
                 ListTile(
                   leading: const Icon(Icons.people, color: Color(0xFF0860DB)),
@@ -57,7 +59,10 @@ class AppDrawer extends StatelessWidget {
                     "Filtrar Sócios",
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
-                  onTap: () => Navigator.of(context).pushNamed(Rotas.filtrarContrato),
+                  onTap:
+                      () => Navigator.of(
+                        context,
+                      ).pushNamed(Rotas.filtrarContrato),
                 ),
                 ListTile(
                   leading: const Icon(Icons.book, color: Color(0xFF0860DB)),
@@ -65,7 +70,21 @@ class AppDrawer extends StatelessWidget {
                     "Listar contratos salvos",
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
-                  onTap: () => Navigator.of(context).pushNamed(Rotas.listarContratosSalvos),
+                  onTap:
+                      () => Navigator.of(
+                        context,
+                      ).pushNamed(Rotas.listarContratosSalvos),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.group, color: Color(0xFF0860DB)),
+                  title: const Text(
+                    "Listar sócios salvos",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                  onTap:
+                      () => Navigator.of(
+                        context,
+                      ).pushNamed(Rotas.listarSociosSalvos),
                 ),
                 ListTile(
                   leading: const Icon(Icons.star, color: Color(0xFF0860DB)),
@@ -87,10 +106,9 @@ class AppDrawer extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
               onTap: () {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  Rotas.login,
-                  (route) => false,
-                );
+                Navigator.of(
+                  context,
+                ).pushNamedAndRemoveUntil(Rotas.login, (route) => false);
               },
             ),
           ),

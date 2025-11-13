@@ -129,7 +129,7 @@ class _LerContratoState extends State<LerContrato> {
 
   Future<int> _enviarPdfParaApi(Uint8List fileBytes, String fileName) async {
     // Sempre dar "php -S 0.0.0.0:8000 -t ." na pasta /api e utilizar o Ip da sua maquina para acessar
-    final uri = Uri.parse('http://192.168.251.27:8000/ler');
+    final uri = Uri.parse('http://192.168.1.8:8000/ler');
     //172.20.20.252
 
     final request = http.MultipartRequest('POST', uri);
